@@ -29,12 +29,27 @@ public class Item : MonoBehaviour
 
     public bool IsEquipped { get { return Manager != null && Manager.CurrentItem == this; } }
 
+    private void Awake()
+    {        
+        Body.interpolation = RigidbodyInterpolation.None;
+    }
+
+    public void UponEquip()
+    {
+        Body.isKinematic = true;
+        transform.localPosition = EquippedOffset;
+        transform.localRotation = Quaternion.identity;
+        BroadcastMessage("OnEquip",  SendMessageOptions.DontRequireReceiver);
+    }
+
+    public void UponDequip()
+    {
+        Body.isKinematic = false;
+        BroadcastMessage("OnDequip", SendMessageOptions.DontRequireReceiver);
+    }
+
     private void Update()
     {
-        // TODO possibly disable (trigger) colliders to avoid weird interaction with world rigidbodies.
-        Body.isKinematic = IsEquipped;
-        Body.interpolation = RigidbodyInterpolation.None;
-
         if (IsEquipped)
         {
             transform.localPosition = EquippedOffset;

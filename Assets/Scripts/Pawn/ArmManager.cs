@@ -17,6 +17,7 @@ public class ArmManager : MonoBehaviour
 
     public ArmIK LeftArm, RightArm;
     public Transform IdleLeft, IdleRight;
+    public Transform View;
 
     [Header("Transition")]
     [Range(0f, 10f)]
@@ -36,19 +37,19 @@ public class ArmManager : MonoBehaviour
             var left = item.LeftHandPos;
             var right = item.RightHandPos;
 
-            Vector3 finalRight = (right == null || !right.gameObject.activeInHierarchy) ? RightArm.transform.position + Vector3.down * 2f : right.position;
-            Vector3 finalLeft = (left == null || !left.gameObject.activeInHierarchy) ? LeftArm.transform.position + Vector3.down * 2f : left.position;
+            Vector3 finalRight = (right == null || !right.gameObject.activeInHierarchy) ? RightArm.transform.position - RightArm.transform.up * 2f : right.position;
+            Vector3 finalLeft = (left == null || !left.gameObject.activeInHierarchy) ? LeftArm.transform.position - LeftArm.transform.up * 2f : left.position;
 
             float finalRotRight = right == null ? 0f : right.localEulerAngles.z;
             float finalRotLeft = left == null ? 0f : left.localEulerAngles.z;
 
             RightArm.TargetPosition = finalRight;
             RightArm.ElbowOffset = finalRotRight;
-            lastPosRight = (finalRight, finalRotRight);
+            lastPosRight = (View.InverseTransformPoint(finalRight), finalRotRight);
 
             LeftArm.TargetPosition = finalLeft;
             LeftArm.ElbowOffset = finalRotLeft;
-            lastPosLeft = (finalLeft, finalRotLeft);
+            lastPosLeft = (View.InverseTransformPoint(finalLeft), finalRotLeft);
 
             timer = 0f;
         }
@@ -61,11 +62,14 @@ public class ArmManager : MonoBehaviour
             float p = TransitionTime <= 0f ? 1f : (timer / TransitionTime);
             float x = TransitionCurve.Evaluate(p);
 
+            Vector3 worldRight = View.TransformPoint(lastPosRight.pos);
+            Vector3 worldLeft = View.TransformPoint(lastPosLeft.pos);
+
             // Where 0 is item, 1 is idle pos.
-            Vector3 finalRight = Vector3.Lerp(lastPosRight.pos, IdleRight.position, x);
+            Vector3 finalRight = Vector3.Lerp(worldRight, IdleRight.position, x);
             float finalRotRight = Mathf.Lerp(lastPosRight.rot, IdleRight.localEulerAngles.z, x);
 
-            Vector3 finalLeft = Vector3.Lerp(lastPosLeft.pos, IdleLeft.position, x);
+            Vector3 finalLeft = Vector3.Lerp(worldLeft, IdleLeft.position, x);
             float finalRotLeft = Mathf.Lerp(lastPosLeft.rot, IdleLeft.localEulerAngles.z, x);
 
             RightArm.TargetPosition = finalRight;

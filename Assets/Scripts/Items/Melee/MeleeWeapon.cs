@@ -180,8 +180,23 @@ public class MeleeWeapon : MonoBehaviour
                 OnAttackEnd();
                 break;
 
+            case "throw":
+                float speed = e.floatParameter == 0f ? 15f : e.floatParameter;
+                var graphics = transform.GetChild(0);
+
+                Anim.SetBool("Dropped", true);
+                Item.Manager.DropCurrentItem(graphics.position + transform.forward * speed * Time.deltaTime, graphics.rotation, transform.forward * speed);
+                Anim.Update(Time.deltaTime);
+
+                break;
+
             default:
                 break;
         }
+    }
+
+    private void OnEquip()
+    {
+        Anim.SetBool("Dropped", false);
     }
 }

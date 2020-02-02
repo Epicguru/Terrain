@@ -1,4 +1,5 @@
 ﻿
+using System.Collections;
 using UnityEngine;
 
 public class ItemManager : MonoBehaviour
@@ -39,8 +40,7 @@ public class ItemManager : MonoBehaviour
 
         i.Manager = this;
         i.transform.SetParent(ItemParent);
-        i.transform.localPosition = Vector3.zero;
-        i.transform.localRotation = Quaternion.identity;
+        i.UponEquip();
         CurrentItem = i;
     }
 
@@ -51,5 +51,20 @@ public class ItemManager : MonoBehaviour
 
         CurrentItem.Manager = null;
         CurrentItem.transform.SetParent(null);
+        CurrentItem.UponDequip();
+        CurrentItem = null;
+    }
+
+    public void DropCurrentItem(Vector3 pos, Quaternion rot, Vector3 vel)
+    {
+        var curr = CurrentItem;
+        if (curr == null)
+            return;
+
+        DropCurrentItem();
+
+        curr.transform.position = pos;
+        curr.transform.rotation = rot;
+        curr.Body.velocity = vel;
     }
 }

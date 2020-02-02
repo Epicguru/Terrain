@@ -1,15 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [ExecuteInEditMode]
-public class ArmIK : MonoBehaviour
+public class LimbIK : MonoBehaviour
 {
     [Header("References")]
-    public Transform TopBone, LowerBone;
+    public Transform TopBone;
+    public Transform LowerBone;
     public Transform BoneDir;
 
     [Header("Runtime")]
+    public bool InvertedMode = false;
     public Vector3 TargetPosition;
     public float ElbowOffset;
 
@@ -17,29 +17,34 @@ public class ArmIK : MonoBehaviour
     public float TopBoneLength = 1f;
     public float LowerBoneLength = 1f;
 
-    private bool isOutOfBounds = false;
+    public float MaxReach { get { return TopBoneLength + LowerBoneLength; } }
+    public float MinReach { get { return Mathf.Abs(LowerBoneLength - TopBoneLength); } }
 
-    private void Update()
+    public bool IsOutOfBounds { get; private set; }
+    public float CurrentExtension { get; private set; }
+
+    private void LateUpdate()
     {
         Vector3 targetPos = TargetPosition;
         Vector3 basePosition = TopBone.position;
         Vector3 offset = (targetPos - basePosition);
-        float minDistance = Mathf.Abs(LowerBoneLength - TopBoneLength);
-        float maxDistance = TopBoneLength + LowerBoneLength;
+        float minDistance = MinReach;
+        float maxDistance = MaxReach;
         float offsetMag = offset.magnitude;
-        isOutOfBounds = false;
+        IsOutOfBounds = false;
         if (offsetMag > maxDistance)
         {
             targetPos = basePosition + offset.normalized * (maxDistance - 0.0001f);
-            isOutOfBounds = true;
+            IsOutOfBounds = true;
         }
         if(offsetMag < minDistance)
         {
             targetPos = basePosition + offset.normalized * (minDistance + 0.0001f);
-            isOutOfBounds = true;
+            IsOutOfBounds = true;
         }
 
         float d = (targetPos - basePosition).magnitude;
+        CurrentExtension = d;
         float x = TopBoneLength;
         float y = LowerBoneLength;
         float x2 = x * x;
@@ -50,12 +55,20 @@ public class ArmIK : MonoBehaviour
         float beta = Mathf.Acos((d2 - x2 - y2) / (2 * x * y)) * Mathf.Rad2Deg;
 
         // Rotate both joints to achieve target distance.
-        TopBone.localEulerAngles = new Vector3(alpha - 180f, 0f, 0f);
-        LowerBone.localEulerAngles = new Vector3(beta, 0f, 0f);
+        TopBone.localEulerAngles = new Vector3((alpha - 180f) * (InvertedMode ? -1f : 1f), 0f, 0f);
+        LowerBone.localEulerAngles = new Vector3(beta * (InvertedMode ? -1f : 1f), 0f, 0f);
         
         // Now the arm is extended to the correct length, point it towards the target.
         BoneDir.LookAt(targetPos, -transform.up);
+
+        // Make up point forwards.
         BoneDir.Rotate(90f, 0f, 0f);
+
+        if (InvertedMode)
+        {
+            // Make down point forwards (it makes no sense, just accept it).
+            BoneDir.Rotate(180, 0f, 0f);
+        }
 
         // Elbow offset (rotating arm so that elbow is below, out to the side etc.)
         BoneDir.RotateAround(BoneDir.position, (targetPos - BoneDir.position), ElbowOffset);
@@ -63,7 +76,7 @@ public class ArmIK : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = isOutOfBounds ? Color.red : Color.green;
+        Gizmos.color = IsOutOfBounds ? Color.red : Color.green;
         Gizmos.DrawCube(TargetPosition, Vector3.one * 0.03f);
     }
 }

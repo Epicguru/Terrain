@@ -13,7 +13,7 @@ public class FollowTarget : MonoBehaviour
     public bool RunInEditMode = false;
 
     private bool isArm;
-    private ArmIK arm;
+    private LimbIK arm;
 
     public enum UpdateMode
     {
@@ -32,7 +32,7 @@ public class FollowTarget : MonoBehaviour
         if (arm != null)
             return;
 
-        arm = GetComponentInParent<ArmIK>();
+        arm = GetComponentInParent<LimbIK>();
         isArm = arm != null;
     }
 

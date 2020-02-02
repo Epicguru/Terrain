@@ -15,7 +15,7 @@ public class ArmManager : MonoBehaviour
     }
     private Pawn _pawn;
 
-    public ArmIK LeftArm, RightArm;
+    public LimbIK LeftArm, RightArm;
     public Transform IdleLeft, IdleRight;
     public Transform View;
 

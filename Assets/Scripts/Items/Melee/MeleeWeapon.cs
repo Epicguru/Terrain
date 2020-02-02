@@ -75,6 +75,9 @@ public class MeleeWeapon : MonoBehaviour
             Throw = false;
             Anim.SetTrigger("Throw");
         }
+
+        // Update UI elements (such as block indicator
+        UpdateUI();
     }
 
     private void UpdateInput()
@@ -120,7 +123,21 @@ public class MeleeWeapon : MonoBehaviour
         {
             BlockHit = true;
             BlockHitDirection = BlockDirection;
+            UIBlockHit(); // Should this be done when the animation is actually triggered instead? Or is this better to keep the UI representing the real state?
         }
+    }
+
+    private void UpdateUI()
+    {
+        var block = GlobalUIElement.Get<UI_BlockIndicator>();
+        block.Active = Block;
+        block.BlockDirection = BlockDirection;
+    }
+
+    private void UIBlockHit()
+    {
+        var block = GlobalUIElement.Get<UI_BlockIndicator>();
+        block.BlockHit();
     }
 
     private int GetLargest(params float[] args)
@@ -198,5 +215,12 @@ public class MeleeWeapon : MonoBehaviour
     private void OnEquip()
     {
         Anim.SetBool("Dropped", false);
+    }
+
+    private void OnDequip()
+    {
+        // Update UI to ensure that UI elements don't 'linger'.
+        Block = false;
+        UpdateUI();
     }
 }

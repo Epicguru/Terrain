@@ -32,6 +32,7 @@ public class Item : MonoBehaviour
     private void Awake()
     {        
         Body.interpolation = RigidbodyInterpolation.None;
+        gameObject.layer = SortingLayer.NameToID("Items");
     }
 
     public void UponEquip()

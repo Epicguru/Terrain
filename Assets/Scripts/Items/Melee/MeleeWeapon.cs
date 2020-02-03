@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Item))]
 public class MeleeWeapon : MonoBehaviour
@@ -14,16 +13,7 @@ public class MeleeWeapon : MonoBehaviour
         }
     }
     private Item _item;
-    public Animator Anim
-    {
-        get
-        {
-            if (_anim == null)
-                _anim = GetComponentInChildren<Animator>();
-            return _anim;
-        }
-    }
-    private Animator _anim;
+    public Animator Anim { get { return Item.Animator; } }
 
     [Header("References")]
     public CameraLook Look;
@@ -32,18 +22,12 @@ public class MeleeWeapon : MonoBehaviour
     public bool Block;
     [Range(0, 2)]
     public int BlockDirection;
-    public bool BlockHit;
-    [Range(0, 2)]
-    public int BlockHitDirection;
 
-    [Header("Attack")]
-    public bool Attack;
-    public int AttackVariant;
-    public float ComboTimeout = 0.3f;
-    public bool Throw;
+    [Header("Custom Animation")]
+    public bool CustomAnimationAutoExit = true;
+    public float CustomAnimationSpeed = 1f;
 
     [Header("Other Input")]
-    public bool Inspect;
     public AnimationClip Clip;
 
     [Header("Runtime")]
@@ -53,42 +37,51 @@ public class MeleeWeapon : MonoBehaviour
     {
         UpdateInput();
 
-        Anim.SetBool("Dropped", !Item.IsEquipped);
-
         Anim.SetInteger("BlockDirection", BlockDirection);
+
+        Anim.SetBool("Dropped", !Item.IsEquipped);
         Anim.SetBool("Block", Block);
+        Anim.SetBool("CustomAutoExit", CustomAnimationAutoExit);
 
-        Anim.SetInteger("AttackVariant", AttackVariant);
-        if (Attack)
-        {
-            Attack = false;
-            if (!Block)
-            {
-                Anim.SetTrigger("Attack");
-            }
-        }
-
-        Anim.SetInteger("BlockHitDirection", BlockHitDirection);
-        if (BlockHit)
-        {
-            BlockHit = false;
-            Anim.SetTrigger("BlockHit");
-        }
-
-        if (Throw)
-        {
-            Throw = false;
-            Anim.SetTrigger("Throw");
-        }
-
-        if (Inspect)
-        {
-            Inspect = false;
-            Anim.SetTrigger("Inspect");
-        }
+        Anim.SetFloat("CustomSpeed", CustomAnimationSpeed);
 
         // Update UI elements (such as block indicator
         UpdateUI();
+    }
+
+    public void TriggerCustom()
+    {
+        Anim.SetTrigger("Custom");
+    }
+
+    public void TriggerCustomExit()
+    {
+        Anim.SetTrigger("CustomExit");
+    }
+
+    public void TriggerAttack(int variant)
+    {
+        if (!Block)
+        {
+            Anim.SetInteger("AttackVariant", variant);
+            Anim.SetTrigger("Attack");
+        }
+    }
+
+    public void TriggerBlockHit(int direction)
+    {
+        Anim.SetInteger("BlockHitDirection", direction);
+        Anim.SetTrigger("BlockHit");
+    }
+
+    public void TriggerThrow()
+    {
+        Anim.SetTrigger("Throw");
+    }
+
+    public void TriggerInspect()
+    {
+        Anim.SetTrigger("Inspect");
     }
 
     private void UpdateInput()
@@ -108,7 +101,7 @@ public class MeleeWeapon : MonoBehaviour
             Vector2 movement = new Vector2(Look.HorizontalTurnDelta, -Look.VerticalTurnDelta);
             Vector2 moveNormal = movement.normalized;
 
-            if(movement.magnitude >= 1f)
+            if (movement.magnitude >= 1f)
             {
                 float upAmount = Vector2.Dot(up, moveNormal);
                 float downAmount = Vector2.Dot(down, moveNormal); // Not a valid block direction, but used to prevent weird blocking when aiming down.
@@ -116,66 +109,37 @@ public class MeleeWeapon : MonoBehaviour
                 float leftAmount = Vector2.Dot(left, moveNormal);
 
                 int dir = GetLargest(upAmount, rightAmount, leftAmount, downAmount);
-                if(dir != 3)
+                if (dir != 3)
                 {
                     BlockDirection = dir;
                 }
-            }           
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Attack = true;
+            TriggerAttack(Random.Range(0, 3));
         }
 
-        Throw = Input.GetKeyDown(KeyCode.E);
+        if (Input.GetKeyDown(KeyCode.E))
+            TriggerThrow();
 
-        if(Input.GetKeyDown(KeyCode.F) && Block)
+        if (Input.GetKeyDown(KeyCode.F) && Block)
         {
-            BlockHit = true;
-            BlockHitDirection = BlockDirection;
+            TriggerBlockHit(BlockDirection);
             UIBlockHit(); // Should this be done when the animation is actually triggered instead? Or is this better to keep the UI representing the real state?
-        }        
+        }
 
         if (Input.GetKeyDown(KeyCode.I))
         {
-            Inspect = true;
-
-            SwapOutAnimation("Custom", Clip);
+            TriggerInspect();
         }
 
-    }
-
-    private void SwapOutAnimation(string name, AnimationClip clip)
-    {
-        var controller = Anim.runtimeAnimatorController;
-        Debug.Assert(controller is AnimatorOverrideController, "Expected for runtime controller to be override.");
-        var real = controller as AnimatorOverrideController;
-
-        var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
-        real.GetOverrides(overrides);
-
-        int index = -1;
-        int i = 0;
-        foreach (var pair in overrides)
+        if (Input.GetKeyDown(KeyCode.C))
         {
-            if(pair.Key.name.Trim() == name.Trim())
-            {
-                index = i;
-            }
-
-            Debug.Log($"{pair.Key.name} -> {(pair.Value == null ? "null" : pair.Value.name)}");
-            i++;
+            Item.InjectAnimation("Custom", Clip);
+            TriggerCustom();
         }
-
-        Debug.Assert(index != -1, $"Failed to find animation to override for name {name.Trim()}.");
-
-        var current = overrides[index];
-        var replaced = new KeyValuePair<AnimationClip, AnimationClip>(current.Key, clip);
-        overrides[index] = replaced;
-
-        real.ApplyOverrides(overrides);
-        Debug.Log("Replaced animation clip");
     }
 
     private void UpdateUI()
@@ -198,7 +162,7 @@ public class MeleeWeapon : MonoBehaviour
         for (int i = 0; i < args.Length; i++)
         {
             float value = args[i];
-            if(value > record)
+            if (value > record)
             {
                 record = value;
                 index = i;
@@ -216,7 +180,6 @@ public class MeleeWeapon : MonoBehaviour
     private void OnAttackEnd()
     {
         IsInAttack = false;
-        AttackVariant = NewRandom(0, 3, AttackVariant);
     }
 
     private int NewRandom(int min, int max, int not)
@@ -225,7 +188,7 @@ public class MeleeWeapon : MonoBehaviour
             return min;
 
         int r = Random.Range(min, max);
-        while(r == not)
+        while (r == not)
         {
             r = Random.Range(min, max);
         }

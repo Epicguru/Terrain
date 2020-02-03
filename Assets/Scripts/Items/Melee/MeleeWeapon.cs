@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Item))]
 public class MeleeWeapon : MonoBehaviour
@@ -41,6 +42,10 @@ public class MeleeWeapon : MonoBehaviour
     public float ComboTimeout = 0.3f;
     public bool Throw;
 
+    [Header("Other Input")]
+    public bool Inspect;
+    public AnimationClip Clip;
+
     [Header("Runtime")]
     public bool IsInAttack;
 
@@ -74,6 +79,12 @@ public class MeleeWeapon : MonoBehaviour
         {
             Throw = false;
             Anim.SetTrigger("Throw");
+        }
+
+        if (Inspect)
+        {
+            Inspect = false;
+            Anim.SetTrigger("Inspect");
         }
 
         // Update UI elements (such as block indicator
@@ -124,7 +135,47 @@ public class MeleeWeapon : MonoBehaviour
             BlockHit = true;
             BlockHitDirection = BlockDirection;
             UIBlockHit(); // Should this be done when the animation is actually triggered instead? Or is this better to keep the UI representing the real state?
+        }        
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Inspect = true;
+
+            SwapOutAnimation("Custom", Clip);
         }
+
+    }
+
+    private void SwapOutAnimation(string name, AnimationClip clip)
+    {
+        var controller = Anim.runtimeAnimatorController;
+        Debug.Assert(controller is AnimatorOverrideController, "Expected for runtime controller to be override.");
+        var real = controller as AnimatorOverrideController;
+
+        var overrides = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+        real.GetOverrides(overrides);
+
+        int index = -1;
+        int i = 0;
+        foreach (var pair in overrides)
+        {
+            if(pair.Key.name.Trim() == name.Trim())
+            {
+                index = i;
+            }
+
+            Debug.Log($"{pair.Key.name} -> {(pair.Value == null ? "null" : pair.Value.name)}");
+            i++;
+        }
+
+        Debug.Assert(index != -1, $"Failed to find animation to override for name {name.Trim()}.");
+
+        var current = overrides[index];
+        var replaced = new KeyValuePair<AnimationClip, AnimationClip>(current.Key, clip);
+        overrides[index] = replaced;
+
+        real.ApplyOverrides(overrides);
+        Debug.Log("Replaced animation clip");
     }
 
     private void UpdateUI()

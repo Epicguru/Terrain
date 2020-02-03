@@ -24,6 +24,10 @@ public class ArmManager : MonoBehaviour
     public float TransitionTime = 1f;
     public AnimationCurve TransitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+    [Header("Creator Mode")]
+    public Item EditorItem;
+    public bool GiveDebugWarnings = true;
+
     private float timer;
     private (Vector3 pos, float rot) lastPosRight, lastPosLeft;
 
@@ -31,6 +35,29 @@ public class ArmManager : MonoBehaviour
     {
         var im = Pawn.ItemManager;
         var item = im.CurrentItem;
+
+        if(!Application.isPlaying && EditorItem != null)
+        {
+            item = EditorItem;
+            if (GiveDebugWarnings)
+            {
+                if(item.transform.parent != Pawn.ItemManager.ItemParent)
+                {
+                    Debug.LogWarning($"In order to animate and debug item {item.Name}, it should be a child of the player's {Pawn.ItemManager.ItemParent.name} gameobject.");
+                }
+                else
+                {
+                    if(item.transform.localPosition != item.EquippedOffset)
+                    {
+                        Debug.LogWarning($"Current editing item {item.Name} does not have a local position of {item.EquippedOffset}! This can cause issues when animating.");
+                    }
+                    if (item.transform.localRotation != Quaternion.identity)
+                    {
+                        Debug.LogWarning($"Current editing item {item.Name} does not have a local rotation of (0, 0, 0)! This can cause issues when animating.");
+                    }
+                }
+            }
+        }
 
         if(item != null)
         {

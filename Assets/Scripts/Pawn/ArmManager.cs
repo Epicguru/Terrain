@@ -26,10 +26,20 @@ public class ArmManager : MonoBehaviour
 
     [Header("Creator Mode")]
     public Item EditorItem;
+    public bool EquipEditorItemOnStart = true;
     public bool GiveDebugWarnings = true;
 
     private float timer;
     private (Vector3 pos, float rot) lastPosRight, lastPosLeft;
+
+    private void Start()
+    {
+        if(Application.isEditor && EditorItem != null && EquipEditorItemOnStart)
+        {
+            Pawn.ItemManager.SetItem(EditorItem);
+            EditorItem = null;
+        }
+    }
 
     private void Update()
     {

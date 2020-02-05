@@ -6,16 +6,22 @@ public class GunSlide : MonoBehaviour
 {
     [Header("Animation")]
     [Range(0f, 2f)]
-    public float Lerp = 0f;
-    public bool AnimOverride = false;
+    [SerializeField]
+    private float Lerp = 0f;
+    [SerializeField]
+    private bool AnimOverride = false;
 
     [Header("Settings")]
-    public Transform Target;
-    public Vector3 StartPos, EndPos;
+    [SerializeField]
+    private Transform Target;
+    [SerializeField]
+    private Vector3 StartPos, EndPos;
 
     // If override is true, then the animation lerp value is not used UNLESS AnimOverride is true.
-    public bool Override { get; set; } = false;
-    public float OverrideLerp { get; set; } = 1f;
+    [HideInInspector]
+    public bool Override = false;
+    [HideInInspector]
+    public float OverrideLerp = 1f;
 
     private void LateUpdate()
     {

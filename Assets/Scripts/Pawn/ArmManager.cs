@@ -34,7 +34,7 @@ public class ArmManager : MonoBehaviour
 
     private void Start()
     {
-        if(Application.isEditor && EditorItem != null && EquipEditorItemOnStart)
+        if(Application.isEditor && EditorItem != null && EquipEditorItemOnStart && Application.isPlaying)
         {
             Pawn.ItemManager.SetItem(EditorItem);
             EditorItem = null;

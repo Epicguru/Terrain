@@ -39,7 +39,6 @@ public class MeleeWeapon : MonoBehaviour
 
         Anim.SetInteger("BlockDirection", BlockDirection);
 
-        Anim.SetBool("Dropped", !Item.IsEquipped);
         Anim.SetBool("Block", Block);
         Anim.SetBool("CustomAutoExit", CustomAnimationAutoExit);
 

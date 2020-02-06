@@ -163,5 +163,6 @@ public class Item : MonoBehaviour
             transform.localPosition = EquippedOffset;
             transform.localRotation = Quaternion.identity;
         }
+        Animator?.SetBool("Dropped", !IsEquipped);
     }
 }

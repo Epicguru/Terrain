@@ -1,4 +1,5 @@
-﻿
+
+using MyBox;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,18 +30,20 @@ public class Gun : MonoBehaviour
     private GunSlide _gunSlide;
     public Animator Anim { get { return Item.Animator; } }
 
-    [Header("Shooting")]
+    [Foldout("Shooting", true)]
     public bool BulletInChamber = false;
     public int MagazineBullets = 0;
+    [PositiveValueOnly]
     public int MagazineCapacity = 30;
 
-    [Header("ADS")]
+    [Foldout("ADS", true)]
     public bool ADS = false;
+    [PositiveValueOnly]
     public float ADSTime = 0.3f;
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }
-    public bool CanADS { get { return Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") && todoAfterUnADS.Count == 0; } }
+    public bool CanADS { get { return (Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") && !Anim.IsInTransition(0)) && todoAfterUnADS.Count == 0; } }
 
     public float ADSLerp { get; private set; }
     public bool IsInADS { get { return ADSLerp > 0f; } }
@@ -78,6 +81,7 @@ public class Gun : MonoBehaviour
             // Override slide behaviour 
             slide.Override = !BulletInChamber;
             slide.OverrideLerp = 1f;
+            slide.IsInTransition = Anim.IsInTransition(0);
         }
     }
     
@@ -114,15 +118,15 @@ public class Gun : MonoBehaviour
 
     private void UpdateInput()
     {
-        ADS = Input.GetKey(KeyCode.E);
-        if (Input.GetKeyDown(KeyCode.F))
-            TriggerInspect();
-        if (Input.GetKeyDown(KeyCode.X))
-            TriggerMelee();
-        if (Input.GetKeyDown(KeyCode.G))
+        ADS = Input.GetKey(KeyCode.Mouse1);
+        if (Input.GetKeyDown(KeyCode.Mouse0))
             TriggerShoot();
         if (Input.GetKeyDown(KeyCode.R))
             TriggerReload();
+        if (Input.GetKeyDown(KeyCode.Mouse3))
+            TriggerMelee();
+        if (Input.GetKeyDown(KeyCode.F))
+            TriggerInspect();
     }
 
     public void TriggerShoot()
@@ -138,6 +142,10 @@ public class Gun : MonoBehaviour
             Debug.LogWarning("Already reloading...");
             return;
         }
+
+        // Don't reload if we already have max bullets.
+        if (MagazineBullets >= MagazineCapacity)
+            return;
 
         // This action is the code that actually needs to be run.
         Action a = new Action(() =>

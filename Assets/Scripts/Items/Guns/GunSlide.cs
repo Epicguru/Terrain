@@ -22,11 +22,14 @@ public class GunSlide : MonoBehaviour
     public bool Override = false;
     [HideInInspector]
     public float OverrideLerp = 1f;
+    [HideInInspector]
+    public bool IsInTransition = false; // When the animator is in transition, AnimOverride is ignored since the animation lerp property is incorrectly interpolated by Mekanism.
 
     private void LateUpdate()
     {
         float lerp = Lerp;
-        if (Override && !AnimOverride)
+        //if (Override && !(AnimOverride && true))
+        if (Override && !(AnimOverride && !IsInTransition))
             lerp = OverrideLerp;
 
         Target.localPosition = Vector3.LerpUnclamped(StartPos, EndPos, lerp);

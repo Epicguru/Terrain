@@ -14,6 +14,7 @@ public class LimbIK : MonoBehaviour
     public float ElbowOffset;
 
     [Header("Settings")]
+    public bool AutoUpdate = true;
     public float TopBoneLength = 1f;
     public float LowerBoneLength = 1f;
 
@@ -24,6 +25,12 @@ public class LimbIK : MonoBehaviour
     public float CurrentExtension { get; private set; }
 
     private void LateUpdate()
+    {
+        if (AutoUpdate)
+            DoUpdate();
+    }
+
+    public void DoUpdate()
     {
         Vector3 targetPos = TargetPosition;
         Vector3 basePosition = TopBone.position;

@@ -41,7 +41,7 @@ public class ArmManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         var im = Pawn.ItemManager;
         var item = im.CurrentItem;
@@ -115,5 +115,8 @@ public class ArmManager : MonoBehaviour
             LeftArm.TargetPosition = finalLeft;
             LeftArm.ElbowOffset = finalRotLeft;
         }
+
+        LeftArm.DoUpdate();
+        RightArm.DoUpdate();
     }
 }

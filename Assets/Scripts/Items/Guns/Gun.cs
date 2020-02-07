@@ -1,7 +1,6 @@
 
 using MyBox;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,6 +39,10 @@ public class Gun : MonoBehaviour
     public bool ADS = false;
     [PositiveValueOnly]
     public float ADSTime = 0.3f;
+
+    [Foldout("Bullet Casings")]
+    [DisplayInspector]
+    public BulletCasing CasingData;
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }

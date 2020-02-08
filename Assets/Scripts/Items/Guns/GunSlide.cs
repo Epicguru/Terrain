@@ -4,6 +4,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class GunSlide : MonoBehaviour
 {
+#pragma warning disable CS0649
+
     [Header("Animation")]
     [Range(0f, 2f)]
     [SerializeField]
@@ -24,6 +26,8 @@ public class GunSlide : MonoBehaviour
     public float OverrideLerp = 1f;
     [HideInInspector]
     public bool IsInTransition = false; // When the animator is in transition, AnimOverride is ignored since the animation lerp property is incorrectly interpolated by Mekanism.
+
+#pragma warning restore CS0649
 
     private void LateUpdate()
     {

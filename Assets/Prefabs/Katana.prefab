@@ -241,7 +241,7 @@ MonoBehaviour:
   Look: {fileID: 0}
   Block: 0
   BlockDirection: 0
-  CustomAnimationAutoExit: 0
+  CustomAnimationAutoExit: 1
   CustomAnimationSpeed: 1
   Clip: {fileID: 7400000, guid: a4ce85a9203d421488b663db9056306d, type: 2}
   IsInAttack: 0
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Katana
   EquippedOffset: {x: 0, y: -0.18, z: 0.281}
-  AllowAnimationInjection: 0
+  AllowAnimationInjection: 1
   NonAllocInjection: 1
   LeftHandPos: {fileID: 1372195760391908520}
   RightHandPos: {fileID: 5647073497973113803}

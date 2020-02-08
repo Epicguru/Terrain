@@ -1,6 +1,5 @@
 
 using MyBox;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,10 +38,19 @@ public class Gun : MonoBehaviour
     public bool ADS = false;
     [PositiveValueOnly]
     public float ADSTime = 0.3f;
+    public AnimationCurve ADSCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-    [Foldout("Bullet Casings")]
+    [Foldout("Bullet Casings", true)]
+    public Transform CasingSpawnPoint;
+    [MinMaxRange(-20f, 20f)]
+    public RangedFloat CasingVerticalVel;
+    [MinMaxRange(-20f, 20f)]
+    public RangedFloat CasingHorizontalVel;
+    [MinMaxRange(-20f, 20f)]
+    public RangedFloat CasingForwardVel;
+    public Vector3 CasingAngularVel = new Vector3(1000f, 500f, 100f);
     [DisplayInspector]
-    public BulletCasing CasingData;
+    public BulletCasingData CasingData;
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }
@@ -51,7 +59,7 @@ public class Gun : MonoBehaviour
     public float ADSLerp { get; private set; }
     public bool IsInADS { get { return ADSLerp > 0f; } }
 
-    private Queue<Action> todoAfterUnADS = new Queue<Action>();
+    private Queue<System.Action> todoAfterUnADS = new Queue<System.Action>();
 
     private void Start()
     {
@@ -116,7 +124,8 @@ public class Gun : MonoBehaviour
         }
         ADSLerp = Mathf.Clamp01(ADSLerp);
 
-        Anim.SetLayerWeight(1, ADSLerp);
+        float finalForAnimation = Mathf.Clamp01(ADSCurve.Evaluate(ADSLerp));
+        Anim.SetLayerWeight(1, finalForAnimation);
     }
 
     private void UpdateInput()
@@ -151,7 +160,7 @@ public class Gun : MonoBehaviour
             return;
 
         // This action is the code that actually needs to be run.
-        Action a = new Action(() =>
+        var a = new System.Action(() =>
         {
             // Make sure that the empty state is updated.
             Anim.SetBool("Empty", !BulletInChamber);
@@ -185,6 +194,27 @@ public class Gun : MonoBehaviour
         Anim.SetTrigger("Melee");
     }
 
+    public void SpawnCasing()
+    {
+        if (CasingSpawnPoint == null)
+            return;
+
+        if (CasingData == null)
+            return;
+
+        if (CasingData.Prefab == null)
+            return;
+
+        var spawned = PoolObject.Spawn(CasingData.Prefab);
+        spawned.transform.position = CasingSpawnPoint.position;
+        spawned.transform.forward = CasingSpawnPoint.forward;
+        Vector3 localVel = new Vector3(CasingHorizontalVel.LerpFromRange(Random.value), CasingVerticalVel.LerpFromRange(Random.value), CasingForwardVel.LerpFromRange(Random.value));
+        Vector3 worldVel = CasingSpawnPoint.TransformVector(localVel);
+        spawned.Velocity = worldVel;
+        spawned.AngularVelocity = CasingAngularVel;
+        spawned.BounceVelocityMultiplier = CasingData.BounceCoefficient;
+    }
+
     private void Rechamber()
     {
         if (MagazineBullets > 0)
@@ -207,6 +237,9 @@ public class Gun : MonoBehaviour
 
         // Auto re-chamber. For some weapons, such as bolt-action rifles, this is not desirable. This will be implemented later.
         Rechamber();
+
+        // Spawn bullet casing.
+        SpawnCasing();
     }
 
     private void OnReload()

@@ -79,8 +79,9 @@ MonoBehaviour:
   LowerBone: {fileID: 2179905886442543938}
   BoneDir: {fileID: 2246125962143767093}
   InvertedMode: 0
-  TargetPosition: {x: 0, y: 0, z: 0}
+  TargetPosition: {x: 0.1313, y: 1.5692, z: 0.276}
   ElbowOffset: 0
+  AutoUpdate: 0
   TopBoneLength: 0.2196631
   LowerBoneLength: 0.35
 --- !u!1 &3131026597039680262
@@ -106,7 +107,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3131026597039680262}
-  m_LocalRotation: {x: 0.019246118, y: 0, z: 0, w: 0.99981475}
+  m_LocalRotation: {x: 0.87039924, y: 0, z: 0, w: 0.49234658}
   m_LocalPosition: {x: 0, y: 0.21966308, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0.99999994}
   m_Children:
@@ -137,8 +138,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5752219319505078579}
-  m_LocalRotation: {x: -0.49505404, y: 0.44300908, z: -0.49842954, w: 0.5569852}
-  m_LocalPosition: {x: 0, y: -1.7763568e-15, z: 0.000000014901163}
+  m_LocalRotation: {x: 0.064708196, y: -0.0052873897, z: -0.081268005, w: 0.9945755}
+  m_LocalPosition: {x: 0, y: -7.1054274e-15, z: 0.00000007450581}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9184188241406625325}
@@ -200,7 +201,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7649023706142957427}
-  m_LocalRotation: {x: -0.011825091, y: 0, z: 0, w: 0.9999301}
+  m_LocalRotation: {x: -0.65952563, y: 0, z: 0, w: 0.7516821}
   m_LocalPosition: {x: -0.000019714142, y: -0.00001616971, z: -0.00020138922}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -422,6 +423,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hammer
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 02680d55db1ed854fba4d5c3d4c28baa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02680d55db1ed854fba4d5c3d4c28baa, type: 3}

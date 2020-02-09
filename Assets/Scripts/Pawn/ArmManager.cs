@@ -37,6 +37,9 @@ public class ArmManager : MonoBehaviour
         if(Application.isEditor && EditorItem != null && EquipEditorItemOnStart && Application.isPlaying)
         {
             int itemIndex = Pawn.ItemManager.Equip(EditorItem);
+            if (itemIndex == -1)
+                itemIndex = Pawn.ItemManager.GetIndex(EditorItem);
+            Debug.Log(itemIndex);
             Pawn.ItemManager.SetActiveItem(itemIndex);
 
             EditorItem = null;

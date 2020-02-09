@@ -29,6 +29,7 @@ public class Gun : MonoBehaviour
     public Animator Anim { get { return Item.Animator; } }
 
     [Foldout("Shooting", true)]
+    public Transform Muzzle;
     public FireMode FireMode = FireMode.Semi;
     [PositiveValueOnly]
     public float MaxRPM = 300f;
@@ -55,6 +56,9 @@ public class Gun : MonoBehaviour
     public Vector3 CasingAngularVel = new Vector3(1000f, 500f, 100f);
     [DisplayInspector]
     public BulletCasingData CasingData;
+
+    [Foldout("Other effects", true)]
+    public MuzzleFlash MuzzleFlashPrefab;
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }
@@ -273,6 +277,16 @@ public class Gun : MonoBehaviour
 
         // Auto re-chamber. For some weapons, such as bolt-action rifles, this is not desirable. This will be implemented later.
         Rechamber();
+
+        // Spawn muzzle flash.
+        if(Muzzle != null && MuzzleFlashPrefab != null)
+        {
+            var spawned = PoolObject.Spawn(MuzzleFlashPrefab);
+            spawned.transform.SetParent(Muzzle);
+            spawned.transform.localPosition = Vector3.zero;
+            spawned.transform.localRotation = Quaternion.identity;
+            spawned.transform.Rotate(0f, 0f, Random.Range(0f, 360f), Space.Self);
+        }
 
         if (SpawnCasingOnShoot)
         {

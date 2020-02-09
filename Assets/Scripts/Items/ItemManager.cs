@@ -174,6 +174,20 @@ public class ItemManager : MonoBehaviour
         return i;
     }
 
+    public int GetIndex(Item i)
+    {
+        if (i == null || i.Manager == null)
+            return -1;
+
+        for (int j = 0; j < MaxEquippedItems; j++)
+        {
+            if (EquippedItems[j] == i)
+                return j;
+        }
+
+        return -1;
+    }
+
     private void Enable(Item i, bool sendMessage = true)
     {
         i.Animator.gameObject.SetActive(true);

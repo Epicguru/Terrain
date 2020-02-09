@@ -992,7 +992,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7129407784035226474
 Transform:
   m_ObjectHideFlags: 0
@@ -1055,6 +1055,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b47a3788164b04e99692ba892d4a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Muzzle: {fileID: 1214715188}
   FireMode: 0
   MaxRPM: 400
   BulletInChamber: 0
@@ -1099,6 +1100,7 @@ MonoBehaviour:
     Max: 0
   CasingAngularVel: {x: 1000, y: 500, z: 100}
   CasingData: {fileID: 11400000, guid: c5e86fb2e28d70c4db035dee6fec0a12, type: 2}
+  MuzzleFlashPrefab: {fileID: 0}
 --- !u!1 &6968574785537683952
 GameObject:
   m_ObjectHideFlags: 0

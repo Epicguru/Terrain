@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
+/// <summary>
+/// Add to game objects to allow them to be pooled. Use UponSpawn() and UponDespawn() as callbacks,
+/// or add events from the inspector.
+/// </summary>
 [DisallowMultipleComponent]
 public class PoolObject : MonoBehaviour
 {

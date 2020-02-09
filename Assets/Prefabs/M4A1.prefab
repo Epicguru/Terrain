@@ -327,6 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b47a3788164b04e99692ba892d4a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Muzzle: {fileID: 1875753710}
   FireMode: 1
   MaxRPM: 750
   BulletInChamber: 0
@@ -371,6 +372,8 @@ MonoBehaviour:
     Max: 0.04189974
   CasingAngularVel: {x: -400, y: 1200, z: 100}
   CasingData: {fileID: 11400000, guid: f8182d5af69aa0b4d8040e92053b5e2d, type: 2}
+  MuzzleFlashPrefab: {fileID: 4372550964283640380, guid: bef8429b1da3e9e4fa701d8ff7bfca57,
+    type: 3}
 --- !u!114 &8296172667674482183
 MonoBehaviour:
   m_ObjectHideFlags: 0

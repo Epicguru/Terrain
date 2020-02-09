@@ -36,7 +36,9 @@ public class ArmManager : MonoBehaviour
     {
         if(Application.isEditor && EditorItem != null && EquipEditorItemOnStart && Application.isPlaying)
         {
-            Pawn.ItemManager.SetItem(EditorItem);
+            int itemIndex = Pawn.ItemManager.Equip(EditorItem);
+            Pawn.ItemManager.SetActiveItem(itemIndex);
+
             EditorItem = null;
         }
     }
@@ -44,7 +46,7 @@ public class ArmManager : MonoBehaviour
     private void LateUpdate()
     {
         var im = Pawn.ItemManager;
-        var item = im.CurrentItem;
+        var item = im.ActiveItem;
 
         if(!Application.isPlaying && EditorItem != null)
         {

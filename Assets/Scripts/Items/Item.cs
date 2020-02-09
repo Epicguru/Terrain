@@ -45,7 +45,19 @@ public class Item : MonoBehaviour
     public Transform LeftHandPos;
     public Transform RightHandPos;
 
-    public bool IsEquipped { get { return Manager != null && Manager.CurrentItem == this; } }
+    public ItemState State
+    {
+        get
+        {
+            if (Manager == null)
+                return ItemState.Dropped;
+
+            if (Manager.ActiveItem == this)
+                return ItemState.Active;
+            else
+                return ItemState.Equipped;
+        }
+    }
 
     private List<KeyValuePair<AnimationClip, AnimationClip>> clips;
     private bool allowInjection = false;
@@ -156,13 +168,42 @@ public class Item : MonoBehaviour
         BroadcastMessage("OnDequip", SendMessageOptions.DontRequireReceiver);
     }
 
+    public void UponActivate()
+    {
+        Body.isKinematic = true;
+        transform.localPosition = EquippedOffset;
+        transform.localRotation = Quaternion.identity;
+        BroadcastMessage("OnActivate", SendMessageOptions.DontRequireReceiver);
+    }
+
+    public void UponDeactivate()
+    {
+        Body.isKinematic = false;
+        BroadcastMessage("OnDeactivate", SendMessageOptions.DontRequireReceiver);
+    }
+
     private void Update()
     {
-        if (IsEquipped)
+        // It is active when held by the player.
+        if (State == ItemState.Active)
         {
             transform.localPosition = EquippedOffset;
             transform.localRotation = Quaternion.identity;
         }
-        Animator?.SetBool("Dropped", !IsEquipped);
+
+        // It is dropped if not equipped on the player.
+        Animator?.SetBool("Dropped", State == ItemState.Dropped);
     }
+
+    public override string ToString()
+    {
+        return $"{Name}";
+    }
+}
+
+public enum ItemState
+{
+    Dropped,
+    Equipped,
+    Active
 }

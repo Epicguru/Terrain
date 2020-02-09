@@ -29,6 +29,9 @@ public class Gun : MonoBehaviour
     public Animator Anim { get { return Item.Animator; } }
 
     [Foldout("Shooting", true)]
+    public FireMode FireMode = FireMode.Semi;
+    [PositiveValueOnly]
+    public float MaxRPM = 300f;
     public bool BulletInChamber = false;
     public int MagazineBullets = 0;
     [PositiveValueOnly]
@@ -42,6 +45,7 @@ public class Gun : MonoBehaviour
 
     [Foldout("Bullet Casings", true)]
     public Transform CasingSpawnPoint;
+    public bool SpawnCasingOnShoot = false;
     [MinMaxRange(-20f, 20f)]
     public RangedFloat CasingVerticalVel;
     [MinMaxRange(-20f, 20f)]
@@ -60,6 +64,8 @@ public class Gun : MonoBehaviour
     public bool IsInADS { get { return ADSLerp > 0f; } }
 
     private Queue<System.Action> todoAfterUnADS = new Queue<System.Action>();
+    private float fireTimer;
+    private bool shootQueued = false;
 
     private void Start()
     {
@@ -68,6 +74,9 @@ public class Gun : MonoBehaviour
 
     private void Update()
     {
+        if (Item.State != ItemState.Active)
+            return;
+
         UpdateInput();
         UpdateADS();
 
@@ -131,14 +140,41 @@ public class Gun : MonoBehaviour
     private void UpdateInput()
     {
         ADS = Input.GetKey(KeyCode.Mouse1);
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-            TriggerShoot();
+        
         if (Input.GetKeyDown(KeyCode.R))
             TriggerReload();
         if (Input.GetKeyDown(KeyCode.Mouse3))
             TriggerMelee();
         if (Input.GetKeyDown(KeyCode.F))
             TriggerInspect();
+
+        fireTimer += Time.deltaTime;
+        float minInterval = 1f / (MaxRPM / 60f);
+
+        switch (FireMode)
+        {
+            case FireMode.Semi:
+
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    shootQueued = true;
+                }
+
+                if(fireTimer >= minInterval && shootQueued)
+                {
+                    TriggerShoot();
+                    fireTimer = 0f;
+                    shootQueued = false;
+                }
+                break;
+            case FireMode.Auto:
+                if (Input.GetKey(KeyCode.Mouse0) && fireTimer >= minInterval)
+                {
+                    TriggerShoot();
+                    fireTimer = 0f;
+                }
+                break;
+        }
     }
 
     public void TriggerShoot()
@@ -238,8 +274,11 @@ public class Gun : MonoBehaviour
         // Auto re-chamber. For some weapons, such as bolt-action rifles, this is not desirable. This will be implemented later.
         Rechamber();
 
-        // Spawn bullet casing.
-        SpawnCasing();
+        if (SpawnCasingOnShoot)
+        {
+            // Spawn bullet casing.
+            SpawnCasing();
+        }        
     }
 
     private void OnReload()
@@ -279,6 +318,24 @@ public class Gun : MonoBehaviour
             case "chamber":
                 OnChamber();
                 break;
+            case "spawncasing":
+            case "spawn casing":
+            case "casing":
+                SpawnCasing();
+                break;
         }
     }
+
+    private void OnDeactivate()
+    {
+        // Since the animator is left in an undefined state, reset all flags.
+        IsReloading = false;
+        ADSLerp = 0f;
+    }
+}
+
+public enum FireMode
+{
+    Semi,
+    Auto
 }

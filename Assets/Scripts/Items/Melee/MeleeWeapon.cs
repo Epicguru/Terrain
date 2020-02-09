@@ -35,6 +35,9 @@ public class MeleeWeapon : MonoBehaviour
 
     private void Update()
     {
+        if (Item.State != ItemState.Active)
+            return;
+
         UpdateInput();
 
         Anim.SetInteger("BlockDirection", BlockDirection);
@@ -85,9 +88,6 @@ public class MeleeWeapon : MonoBehaviour
 
     private void UpdateInput()
     {
-        if (!Item.IsEquipped)
-            return;
-
         Block = Input.GetKey(KeyCode.Mouse1);
         if (Block)
         {
@@ -215,7 +215,7 @@ public class MeleeWeapon : MonoBehaviour
                 var graphics = transform.GetChild(0);
 
                 Anim.SetBool("Dropped", true);
-                Item.Manager.DropCurrentItem(graphics.position + transform.forward * speed * Time.deltaTime, graphics.rotation, transform.forward * speed);
+                //Item.Manager.Dequip(graphics.position + transform.forward * speed * Time.deltaTime, graphics.rotation, transform.forward * speed);
                 Anim.Update(Time.deltaTime);
 
                 break;
@@ -225,12 +225,7 @@ public class MeleeWeapon : MonoBehaviour
         }
     }
 
-    private void OnEquip()
-    {
-        Anim.SetBool("Dropped", false);
-    }
-
-    private void OnDequip()
+    private void OnDeactivate()
     {
         // Update UI to ensure that UI elements don't 'linger'.
         Block = false;

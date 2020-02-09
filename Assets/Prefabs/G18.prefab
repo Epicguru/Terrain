@@ -1088,7 +1088,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   CasingSpawnPoint: {fileID: 787096242}
-  SpawnCasingOnShoot: 0
+  SpawnCasingOnShoot: 1
   CasingVerticalVel:
     Min: 0.67340064
     Max: 1.5712678

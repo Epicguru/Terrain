@@ -232,6 +232,10 @@ public class Gun : MonoBehaviour
     {
         // Triggers immediately regardless of ads state. This just makes it a little more responsive, even if it doesn't look as smooth.
         Anim.SetTrigger("Melee");
+
+        // If reloading, we aren't any more.
+        if (IsReloading)
+            IsReloading = false;
     }
 
     public void SpawnCasing()

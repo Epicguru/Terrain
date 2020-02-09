@@ -46,11 +46,11 @@ public class Gun : MonoBehaviour
     [Foldout("Bullet Casings", true)]
     public Transform CasingSpawnPoint;
     public bool SpawnCasingOnShoot = false;
-    [MinMaxRange(-20f, 20f)]
+    [MinMaxRange(-1f, 5f)]
     public RangedFloat CasingVerticalVel;
-    [MinMaxRange(-20f, 20f)]
+    [MinMaxRange(-1f, 5f)]
     public RangedFloat CasingHorizontalVel;
-    [MinMaxRange(-20f, 20f)]
+    [MinMaxRange(-5f, 5f)]
     public RangedFloat CasingForwardVel;
     public Vector3 CasingAngularVel = new Vector3(1000f, 500f, 100f);
     [DisplayInspector]

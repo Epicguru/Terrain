@@ -3,7 +3,12 @@ guid: cd94c60bce1ba1546b7a29c01d5f01ad
 ModelImporter:
   serializedVersion: 20100
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sights Mat
+    second: {fileID: 2100000, guid: 37df76b82c9048842a77fa042f014c86, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -48,6 +53,7 @@ ModelImporter:
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4

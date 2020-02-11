@@ -39,7 +39,7 @@ public class ArmManager : MonoBehaviour
             int itemIndex = Pawn.ItemManager.Equip(EditorItem);
             if (itemIndex == -1)
                 itemIndex = Pawn.ItemManager.GetIndex(EditorItem);
-            Debug.Log(itemIndex);
+
             Pawn.ItemManager.SetActiveItem(itemIndex);
 
             EditorItem = null;

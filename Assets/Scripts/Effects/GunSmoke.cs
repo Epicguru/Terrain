@@ -2,14 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PoolObject))]
 public class GunSmoke : MonoBehaviour
 {
+    public PoolObject PoolObject
+    {
+        get
+        {
+            if (_po == null)
+                _po = GetComponent<PoolObject>();
+            return _po;
+        }
+    }
+    private PoolObject _po;
+
     private struct SmokePoint
     {
         public Vector3 Position;
         public float Age;
     }
-
 
     public bool Emitting = true;
     public float FadeTime = 0.5f;
@@ -35,6 +46,13 @@ public class GunSmoke : MonoBehaviour
     private float alpha;
     private float alphaTimer;
     private Vector3 emitPos;
+    private bool isFirstFrame = false;
+
+    private void UponSpawn()
+    {
+        ClearPoints();
+        isFirstFrame = true;
+    }
 
     private void Update()
     {
@@ -50,8 +68,16 @@ public class GunSmoke : MonoBehaviour
         }
         else
         {
+            ClearPoints();
+            SnapEmissionPoint();
             alphaTimer += Time.deltaTime;
             alpha = 1f - Mathf.Clamp01(alphaTimer / FadeTime);
+        }
+
+        if (isFirstFrame)
+        {
+            SnapEmissionPoint();
+            isFirstFrame = false;
         }
 
         timer += Time.deltaTime;
@@ -78,6 +104,22 @@ public class GunSmoke : MonoBehaviour
         Line.SetPositions(pointsArray);
 
         Line.material.SetFloat("_Alpha", alpha);
+    }
+
+    private void ClearPoints()
+    {
+        // Clear points so that when we start emitting again there isn't a strange trail from the 
+        // last position to the new current position.
+        if (points.Count > 0)
+        {
+            points.Clear();
+            Line.positionCount = 0;
+        }
+    }
+
+    private void SnapEmissionPoint()
+    {
+        emitPos = transform.position;
     }
 
     private void UpdatePoints()

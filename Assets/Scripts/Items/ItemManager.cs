@@ -34,7 +34,7 @@ public class ItemManager : MonoBehaviour
      * 3. Active. Active items are equipped and also held in the hands, visible and animated.
      */
 
-    private void Start()
+    private void Awake()
     {
         for (int i = 0; i < MaxEquippedItems; i++)
         {
@@ -42,7 +42,8 @@ public class ItemManager : MonoBehaviour
             if (item != null)
             {
                 item.gameObject.SetActive(true);
-                StartCoroutine(Disable(item));
+                item.Animator.gameObject.SetActive(false);
+                //StartCoroutine(Disable(item));
                 item.Manager = this;
             }            
         }

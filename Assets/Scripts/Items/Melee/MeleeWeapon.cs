@@ -15,9 +15,6 @@ public class MeleeWeapon : MonoBehaviour
     private Item _item;
     public Animator Anim { get { return Item.Animator; } }
 
-    [Header("References")]
-    public CameraLook Look;
-
     [Header("Defence")]
     public bool Block;
     [Range(0, 2)]
@@ -97,7 +94,8 @@ public class MeleeWeapon : MonoBehaviour
             Vector2 right = new Vector2(1f, 0f);
             Vector2 left = new Vector2(-1f, 0f);
 
-            Vector2 movement = new Vector2(Look.HorizontalTurnDelta, -Look.VerticalTurnDelta);
+            var look = CameraLook.Instance;
+            Vector2 movement = new Vector2(look.HorizontalTurnDelta, -look.VerticalTurnDelta);
             Vector2 moveNormal = movement.normalized;
 
             if (movement.magnitude >= 1f)

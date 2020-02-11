@@ -21,12 +21,34 @@ public class Item : MonoBehaviour
         get
         {
             if (_anim == null)
-                _anim = GetComponentInChildren<Animator>();
+                _anim = GetComponentInChildren<Animator>(true);
             return _anim;
         }
     }
     private Animator _anim;
+    public Gun Gun
+    {
+        get
+        {
+            if (_gun == null)
+                _gun = GetComponent<Gun>();
+            return _gun;
+        }
+    }
+    private Gun _gun;
+    public MeleeWeapon MeleeWeapon
+    {
+        get
+        {
+            if (_melee == null)
+                _melee = GetComponent<MeleeWeapon>();
+            return _melee;
+        }
+    }
+    private MeleeWeapon _melee;
 
+    public bool IsGun { get { return Gun != null; } }
+    public bool IsMeleeWeapon { get { return MeleeWeapon != null; } }
     public ItemManager Manager { get; internal set; }
 
     [Header("Details")]

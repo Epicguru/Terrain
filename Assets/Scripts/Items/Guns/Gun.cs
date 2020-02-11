@@ -1,5 +1,6 @@
 
 using MyBox;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +31,7 @@ public class Gun : MonoBehaviour
 
     [Foldout("Shooting", true)]
     public Transform Muzzle;
+    public Projectile BulletPrefab;
     public FireMode FireMode = FireMode.Semi;
     [PositiveValueOnly]
     public float MaxRPM = 300f;
@@ -38,11 +40,21 @@ public class Gun : MonoBehaviour
     [PositiveValueOnly]
     public int MagazineCapacity = 30;
 
+    [Foldout("Recoil", true)]
+    [MyBox.Separator("Kick (Gun)")]
+    public Vector2 HorizontalKick = new Vector2(-25f, 50f);
+    public Vector2 VerticalKick = new Vector2(40f, 80f);
+    public float KickFalloff = 0.75f;
+    [MyBox.Separator("Recoil (Camera)")]
+    public Vector2 HorizontalRecoil = new Vector2(-50f, 50f);
+    public Vector2 VerticalRecoil = new Vector2(40f, 50f);
+
     [Foldout("ADS", true)]
     public bool ADS = false;
     [PositiveValueOnly]
     public float ADSTime = 0.3f;
     public AnimationCurve ADSCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    public float ADS_FOV_Multiplier = 0.8f;
 
     [Foldout("Bullet Casings", true)]
     public Transform CasingSpawnPoint;
@@ -259,31 +271,75 @@ public class Gun : MonoBehaviour
         spawned.BounceVelocityMultiplier = CasingData.BounceCoefficient;
     }
 
-    private void Rechamber()
-    {
-        if (MagazineBullets > 0)
-        {
-            MagazineBullets--;
-            BulletInChamber = true;
-        }
-    }
-
-    private void OnShoot()
+    public bool ShootNow(bool immediate = false)
     {
         if (!BulletInChamber)
         {
             Debug.LogWarning($"Gun {Item.Name} has no bullet in the chamber but the shoot animation played...");
-            return;
+            return false;
+        }
+
+        if (immediate)
+        {
+            return InternalShootRegular();
+        }
+        else
+        {
+            var method = InternalShootCoroutine();
+            StartCoroutine(method);
+        }        
+
+        return true;
+    }
+
+    public void AddRecoil()
+    {
+        Vector3 angles = new Vector3();
+        angles.x = Mathf.Lerp(VerticalKick.x, VerticalKick.y, Random.value);
+        angles.y = Mathf.Lerp(HorizontalKick.x, HorizontalKick.y, Random.value);
+
+        ItemMotionController.Instance.AddPunch(angles, KickFalloff);
+
+        Vector2 recoil = new Vector2();
+        recoil.x = Mathf.Lerp(HorizontalRecoil.x, HorizontalRecoil.y, Random.value);
+        recoil.y = Mathf.Lerp(VerticalRecoil.x, VerticalRecoil.y, Random.value);
+
+        CameraLook.Instance.AddRecoil(recoil);
+    }
+
+    private IEnumerator InternalShootCoroutine()
+    {
+        yield return new WaitForEndOfFrame();
+
+        InternalShootRegular();
+
+        yield return true;
+    }
+
+    private bool InternalShootRegular()
+    {
+        if (!BulletInChamber)
+        {
+            Debug.LogWarning($"Gun {Item.Name} has no bullet in the chamber but the shoot animation played...");
+            return false;
         }
 
         // Remove the bullet from the chamber.
         BulletInChamber = false;
 
+        // Spawn the bullet.
+        if (BulletPrefab != null && Muzzle != null)
+        {
+            var spawned = PoolObject.Spawn(BulletPrefab);
+            spawned.transform.position = Muzzle.position;
+            spawned.Velocity = Muzzle.forward * 350f;
+        }
+
         // Auto re-chamber. For some weapons, such as bolt-action rifles, this is not desirable. This will be implemented later.
         Rechamber();
 
         // Spawn muzzle flash.
-        if(Muzzle != null && MuzzleFlashPrefab != null)
+        if (Muzzle != null && MuzzleFlashPrefab != null)
         {
             var spawned = PoolObject.Spawn(MuzzleFlashPrefab);
             spawned.transform.SetParent(Muzzle);
@@ -296,7 +352,26 @@ public class Gun : MonoBehaviour
         {
             // Spawn bullet casing.
             SpawnCasing();
-        }        
+        }
+
+        // Add kick and recoil.
+        AddRecoil();
+
+        return true;
+    }
+
+    private void Rechamber()
+    {
+        if (MagazineBullets > 0)
+        {
+            MagazineBullets--;
+            BulletInChamber = true;
+        }
+    }
+
+    private void OnShoot()
+    {
+        ShootNow();
     }
 
     private void OnReload()

@@ -190,8 +190,8 @@ MonoBehaviour:
   m_RenderPipelineSettings:
     supportShadowMask: 1
     supportSSR: 0
-    supportSSAO: 1
-    supportSubsurfaceScattering: 1
+    supportSSAO: 0
+    supportSubsurfaceScattering: 0
     increaseSssSampleCount: 0
     supportVolumetrics: 0
     increaseResolutionOfVolumetrics: 0
@@ -205,18 +205,18 @@ MonoBehaviour:
     lightLayerName6: Light Layer 6
     lightLayerName7: Light Layer 7
     supportDistortion: 0
-    supportTransparentBackface: 1
-    supportTransparentDepthPrepass: 1
-    supportTransparentDepthPostpass: 1
+    supportTransparentBackface: 0
+    supportTransparentDepthPrepass: 0
+    supportTransparentDepthPostpass: 0
     colorBufferFormat: 74
     supportCustomPass: 1
     customBufferFormat: 12
     supportedLitShaderMode: 2
-    supportDecals: 1
+    supportDecals: 0
     msaaSampleCount: 1
-    supportMotionVectors: 1
-    supportRuntimeDebugDisplay: 1
-    supportDitheringCrossFade: 1
+    supportMotionVectors: 0
+    supportRuntimeDebugDisplay: 0
+    supportDitheringCrossFade: 0
     supportTerrainHole: 0
     supportRayTracing: 0
     supportedRaytracingTier: 2
@@ -281,8 +281,8 @@ MonoBehaviour:
     dynamicResolutionSettings:
       enabled: 0
       maxPercentage: 100
-      minPercentage: 100
-      dynResType: 0
+      minPercentage: 60
+      dynResType: 1
       upsampleFilter: 1
       forceResolution: 0
       forcedPercentage: 100

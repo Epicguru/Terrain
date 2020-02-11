@@ -190,6 +190,10 @@ public class ItemManager : MonoBehaviour
 
     private void Enable(Item i, bool sendMessage = true)
     {
+        // Check if already active.
+        if (i.Animator.gameObject.activeSelf)
+            return;
+
         i.Animator.gameObject.SetActive(true);
         i.transform.localPosition = i.EquippedOffset;
         i.transform.localRotation = Quaternion.identity;
@@ -200,6 +204,10 @@ public class ItemManager : MonoBehaviour
 
     private IEnumerator Disable(Item i)
     {
+        // Check if already disabled.
+        if (!i.Animator.gameObject.activeSelf)
+            yield return null;
+
         i.UponDeactivate();
 
         //c.Anim.Anim.enabled = false;

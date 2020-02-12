@@ -162,16 +162,19 @@ public class Gun : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse3))
             TriggerMelee();
         if (Input.GetKeyDown(KeyCode.F))
-            TriggerInspect();
+            TriggerInspect();        
 
         fireTimer += Time.deltaTime;
         float minInterval = 1f / (MaxRPM / 60f);
+        bool useLaptopControls = SystemInfo.batteryStatus != BatteryStatus.Unknown;
+        bool fireClick = !useLaptopControls ? Input.GetKeyDown(KeyCode.Mouse0) : Input.GetKeyDown(KeyCode.Q);
+        bool fireHold = !useLaptopControls ? Input.GetKey(KeyCode.Mouse0) : Input.GetKey(KeyCode.Q);
 
         switch (FireMode)
         {
             case FireMode.Semi:
 
-                if (Input.GetKeyDown(KeyCode.Mouse0))
+                if (fireClick)
                 {
                     shootQueued = true;
                 }
@@ -184,7 +187,7 @@ public class Gun : MonoBehaviour
                 }
                 break;
             case FireMode.Auto:
-                if (Input.GetKey(KeyCode.Mouse0) && fireTimer >= minInterval)
+                if (fireHold && fireTimer >= minInterval)
                 {
                     TriggerShoot();
                     fireTimer = 0f;

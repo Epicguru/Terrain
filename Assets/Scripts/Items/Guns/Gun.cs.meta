@@ -3,7 +3,14 @@ guid: a3b47a3788164b04e99692ba892d4a60
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Muzzle: {instanceID: 0}
+  - BulletPrefab: {fileID: 190050768521553587, guid: dae0b6ae89343ca4a8cfe3d1ea3a55dd,
+      type: 3}
+  - CasingSpawnPoint: {instanceID: 0}
+  - CasingData: {fileID: 11400000, guid: c5e86fb2e28d70c4db035dee6fec0a12, type: 2}
+  - MuzzleFlashPrefab: {fileID: 4372550964283640380, guid: bef8429b1da3e9e4fa701d8ff7bfca57,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

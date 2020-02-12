@@ -46,7 +46,7 @@ public class ItemManager : MonoBehaviour
                 //StartCoroutine(Disable(item));
                 item.Manager = this;
             }            
-        }
+        }        
     }
 
     private void Update()
@@ -57,6 +57,11 @@ public class ItemManager : MonoBehaviour
             {
                 SetActiveItem(i);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Dequip(currentIndex);
         }
     }
 
@@ -149,6 +154,7 @@ public class ItemManager : MonoBehaviour
         {
             // This item is currently active. Send the deactivate message first.
             item.UponDeactivate();
+            currentIndex = -1;
         }
 
         // Give the item the upon dequip message.
@@ -157,6 +163,7 @@ public class ItemManager : MonoBehaviour
         item.transform.localRotation = Quaternion.identity;
         item.transform.SetParent(null, true);
         item.UponDequip();
+        EquippedItems[index] = null;
 
         return item;
     }
@@ -168,8 +175,7 @@ public class ItemManager : MonoBehaviour
         {
             i.transform.position = pos;
             i.transform.rotation = rotation;
-            if (i.Body != null)
-                i.Body.velocity = velocity;
+            // TODO reimplement velocity.
         }
 
         return i;

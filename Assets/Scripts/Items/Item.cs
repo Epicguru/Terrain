@@ -3,19 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(Rigidbody))]
 public class Item : MonoBehaviour
 {
-    public Rigidbody Body
-    {
-        get
-        {
-            if (_body == null)
-                _body = GetComponent<Rigidbody>();
-            return _body;
-        }
-    }
-    private Rigidbody _body;
     public Animator Animator
     {
         get
@@ -87,7 +76,6 @@ public class Item : MonoBehaviour
 
     private void Awake()
     {        
-        Body.interpolation = RigidbodyInterpolation.None;
         gameObject.layer = SortingLayer.NameToID("Items");
 
         if (AllowAnimationInjection && Animator != null)
@@ -178,7 +166,6 @@ public class Item : MonoBehaviour
 
     public void UponEquip()
     {
-        Body.isKinematic = true;
         transform.localPosition = EquippedOffset;
         transform.localRotation = Quaternion.identity;
         BroadcastMessage("OnEquip",  SendMessageOptions.DontRequireReceiver);
@@ -186,13 +173,11 @@ public class Item : MonoBehaviour
 
     public void UponDequip()
     {
-        Body.isKinematic = false;
         BroadcastMessage("OnDequip", SendMessageOptions.DontRequireReceiver);
     }
 
     public void UponActivate()
     {
-        Body.isKinematic = true;
         transform.localPosition = EquippedOffset;
         transform.localRotation = Quaternion.identity;
         BroadcastMessage("OnActivate", SendMessageOptions.DontRequireReceiver);
@@ -200,7 +185,6 @@ public class Item : MonoBehaviour
 
     public void UponDeactivate()
     {
-        Body.isKinematic = false;
         BroadcastMessage("OnDeactivate", SendMessageOptions.DontRequireReceiver);
     }
 

@@ -132,4 +132,12 @@ public class CameraLook : MonoBehaviour
             }
         }
     }
+
+    //private void OnGUI()
+    //{
+    //    GUILayout.Label($"Device name: {SystemInfo.deviceName}");
+    //    GUILayout.Label($"Device name: {SystemInfo.deviceName}");
+    //    GUILayout.Label($"Battery status: {SystemInfo.batteryStatus}");
+    //    GUILayout.Label($"Battery level: {SystemInfo.batteryLevel*100f:F1}%");
+    //}
 }

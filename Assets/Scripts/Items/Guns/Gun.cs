@@ -3,6 +3,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 [RequireComponent(typeof(Item))]
 public class Gun : MonoBehaviour
@@ -65,7 +66,7 @@ public class Gun : MonoBehaviour
     public RangedFloat CasingHorizontalVel;
     [MinMaxRange(-5f, 5f)]
     public RangedFloat CasingForwardVel;
-    public Vector3 CasingAngularVel = new Vector3(1000f, 500f, 100f);
+    public Vector3 CasingAngularVel = new Vector3(6000f, 500f, 100f);
     [DisplayInspector]
     public BulletCasingData CasingData;
 
@@ -82,10 +83,54 @@ public class Gun : MonoBehaviour
     private Queue<System.Action> todoAfterUnADS = new Queue<System.Action>();
     private float fireTimer;
     private bool shootQueued = false;
+    private bool shootPressed = false;
+
+    private void Awake()
+    {
+        SetupInput();
+    }
 
     private void Start()
     {
         MagazineBullets = MagazineCapacity;
+    }
+
+    private void SetupInput()
+    {
+        var input = Player.Input;
+        input.actions["Aim"].started += ctx => ADS = true;
+        input.actions["Aim"].canceled += ctx => ADS = false;
+        input.actions["Shoot"].started += ctx =>
+        {
+            if(Item.State == ItemState.Active)
+            {
+                shootPressed = true;
+                shootQueued = true;
+            }            
+        };
+        input.actions["Shoot"].canceled += ctx => shootPressed = false;
+
+        input.actions["Reload"].performed += ctx =>
+        {
+            if (Item.State != ItemState.Active)
+                return;
+
+            TriggerReload();
+        };
+        input.actions["Melee"].performed += ctx =>
+        {
+            if (Item.State != ItemState.Active)
+                return;
+
+            TriggerMelee();
+        };
+        input.actions["Inspect"].performed += ctx =>
+        {
+            if (Item.State != ItemState.Active)
+                return;
+
+            TriggerInspect();
+        };
     }
 
     private void Update()
@@ -93,7 +138,7 @@ public class Gun : MonoBehaviour
         if (Item.State != ItemState.Active)
             return;
 
-        UpdateInput();
+        UpdateShooting();
         UpdateADS();
 
         Anim.SetBool("Empty", !BulletInChamber);
@@ -153,31 +198,17 @@ public class Gun : MonoBehaviour
         Anim.SetLayerWeight(1, finalForAnimation);
     }
 
-    private void UpdateInput()
+    private void UpdateShooting()
     {
-        ADS = Input.GetKey(KeyCode.Mouse1);
-        
-        if (Input.GetKeyDown(KeyCode.R))
-            TriggerReload();
-        if (Input.GetKeyDown(KeyCode.Mouse3))
-            TriggerMelee();
-        if (Input.GetKeyDown(KeyCode.F))
-            TriggerInspect();        
+        if (FireMode != FireMode.Semi)
+            shootQueued = false;
 
         fireTimer += Time.deltaTime;
         float minInterval = 1f / (MaxRPM / 60f);
-        bool useLaptopControls = SystemInfo.batteryStatus != BatteryStatus.Unknown;
-        bool fireClick = !useLaptopControls ? Input.GetKeyDown(KeyCode.Mouse0) : Input.GetKeyDown(KeyCode.Q);
-        bool fireHold = !useLaptopControls ? Input.GetKey(KeyCode.Mouse0) : Input.GetKey(KeyCode.Q);
 
         switch (FireMode)
         {
             case FireMode.Semi:
-
-                if (fireClick)
-                {
-                    shootQueued = true;
-                }
 
                 if(fireTimer >= minInterval && shootQueued)
                 {
@@ -187,7 +218,7 @@ public class Gun : MonoBehaviour
                 }
                 break;
             case FireMode.Auto:
-                if (fireHold && fireTimer >= minInterval)
+                if (shootPressed && fireTimer >= minInterval)
                 {
                     TriggerShoot();
                     fireTimer = 0f;
@@ -427,6 +458,8 @@ public class Gun : MonoBehaviour
         // Since the animator is left in an undefined state, reset all flags.
         IsReloading = false;
         ADSLerp = 0f;
+        shootQueued = false;
+        shootPressed = false;
     }
 }
 

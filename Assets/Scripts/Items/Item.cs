@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// An item is an object that can be dropped in the world, picked up, stored in inventories, used, sold etc.
+/// </summary>
 [DisallowMultipleComponent]
-public class Item : MonoBehaviour
+public partial class Item : MonoBehaviour
 {
+    public static float DroppedSpinSpeed { get; set; } = 90;
+
     public Animator Animator
     {
         get
@@ -36,12 +41,14 @@ public class Item : MonoBehaviour
     }
     private MeleeWeapon _melee;
 
+    public Texture2D IconTexture { get; private set; }
     public bool IsGun { get { return Gun != null; } }
     public bool IsMeleeWeapon { get { return MeleeWeapon != null; } }
     public ItemManager Manager { get; internal set; }
 
     [Header("Details")]
     public string Name;
+    public Texture DefaultIcon;
 
     [Header("Equipped")]
     public Vector3 EquippedOffset;
@@ -73,6 +80,7 @@ public class Item : MonoBehaviour
     private List<KeyValuePair<AnimationClip, AnimationClip>> clips;
     private bool allowInjection = false;
     private bool useNonAllocInjection = false;
+    private IconGen.Request iconRequest;
 
     private void Awake()
     {        
@@ -90,6 +98,48 @@ public class Item : MonoBehaviour
                 useNonAllocInjection = true;
             }
         }
+    }
+
+    public bool RefreshIcon(bool forceNewRequest = false)
+    {
+        if (!forceNewRequest)
+        {
+            if (iconRequest != null)
+            {
+                //Debug.LogWarning($"Item icon is already being regenerated, please wait or call with forceNewRequest set to true.");
+                return false;
+            }
+        }
+
+        // Cancel prevoious request, if it exists.
+        if(iconRequest != null)
+        {
+            iconRequest.IsDone = true;
+            iconRequest.InputTexture = null;
+            iconRequest = null;
+        }
+
+        // Create request.
+        iconRequest = new IconGen.Request()
+        {
+            Item = this,
+            InputTexture = IconTexture,
+            OnComplete = newIcon =>
+            {
+                if(newIcon != IconTexture)
+                {
+                    Destroy(IconTexture);
+                }
+                IconTexture = newIcon;
+
+                iconRequest = null;
+            }
+        };
+
+        // Submit request.
+        IconGen.RequestIcon(iconRequest);
+
+        return true;
     }
 
     /// <summary>
@@ -195,6 +245,10 @@ public class Item : MonoBehaviour
         {
             transform.localPosition = EquippedOffset;
             transform.localRotation = Quaternion.identity;
+        }
+        else if(State == ItemState.Dropped)
+        {
+            transform.localEulerAngles += new Vector3(0f, DroppedSpinSpeed, 0f) * Time.deltaTime;
         }
 
         // It is dropped if not equipped on the player.

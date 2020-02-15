@@ -30,12 +30,41 @@ public class MeleeWeapon : MonoBehaviour
     [Header("Runtime")]
     public bool IsInAttack;
 
+    private void Awake()
+    {
+        SetupInput();
+    }
+
+    private void SetupInput()
+    {
+        Player.Input.actions["Shoot"].performed += ctx =>
+        {
+            if (Item.State == ItemState.Active)
+                TriggerAttack(Random.Range(0, 3));
+        };
+        Player.Input.actions["Inspect"].performed += ctx =>
+        {
+            if (Item.State == ItemState.Active)
+                TriggerInspect();
+        };
+        Player.Input.actions["Aim"].started += ctx =>
+        {
+            if (Item.State == ItemState.Active)
+                Block = true;
+        };
+        Player.Input.actions["Aim"].canceled += ctx =>
+        {
+            if (Item.State == ItemState.Active)
+                Block = false;
+        };
+    }
+
     private void Update()
     {
         if (Item.State != ItemState.Active)
             return;
 
-        UpdateInput();
+        UpdateBlocking();
 
         Anim.SetInteger("BlockDirection", BlockDirection);
 
@@ -83,9 +112,8 @@ public class MeleeWeapon : MonoBehaviour
         Anim.SetTrigger("Inspect");
     }
 
-    private void UpdateInput()
+    private void UpdateBlocking()
     {
-        Block = Input.GetKey(KeyCode.Mouse1);
         if (Block)
         {
             // Determine direction.
@@ -111,31 +139,6 @@ public class MeleeWeapon : MonoBehaviour
                     BlockDirection = dir;
                 }
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            TriggerAttack(Random.Range(0, 3));
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-            TriggerThrow();
-
-        if (Input.GetKeyDown(KeyCode.F) && Block)
-        {
-            TriggerBlockHit(BlockDirection);
-            UIBlockHit(); // Should this be done when the animation is actually triggered instead? Or is this better to keep the UI representing the real state?
-        }
-
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            TriggerInspect();
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Item.InjectAnimation("Custom", Clip);
-            TriggerCustom();
         }
     }
 
@@ -227,6 +230,7 @@ public class MeleeWeapon : MonoBehaviour
     {
         // Update UI to ensure that UI elements don't 'linger'.
         Block = false;
+        IsInAttack = false;
         UpdateUI();
     }
 }

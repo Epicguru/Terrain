@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CameraFOVController : MonoBehaviour
 {
+    public static float FOV_Mutliplier { get; private set; }
+
     public Camera Camera;
     public ItemManager ItemManager;
 
@@ -32,5 +34,6 @@ public class CameraFOVController : MonoBehaviour
         realFOV = Mathf.MoveTowards(realFOV, target, MaxFOVChangeSpeed * Time.deltaTime);
 
         Camera.fieldOfView = realFOV;
+        FOV_Mutliplier = realFOV / NormalFOV;
     }
 }

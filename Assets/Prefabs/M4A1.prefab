@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1365951626}
   m_Layer: 0
   m_Name: Gun Smoke
-  m_TagString: Untagged
+  m_TagString: IgnoreForIcon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -408,7 +408,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660738876991269034}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.09, y: -0.139, z: 0.323}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3753138964302204362}
@@ -544,7 +544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4337610293523958633
 Transform:
   m_ObjectHideFlags: 0
@@ -639,7 +639,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8aa5c0373e11af43848bb725aec613c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Physics:
+    Radius: 0.5
+    DrawDebug: 1
+    IsSleeping: 0
+    Velocity: {x: 0, y: 0, z: 0}
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    SleepVelocityThreashold: 0.07
+    SleepPosition: {x: 0, y: 0, z: 0}
+    sleepTimer: 0
   Name: M4A1
+  DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
   EquippedOffset: {x: 0, y: 0, z: 0}
   AllowAnimationInjection: 0
   NonAllocInjection: 1
@@ -1240,7 +1252,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4501258591549155827}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 892556327883587795}

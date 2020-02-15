@@ -4,28 +4,30 @@ using UnityEngine;
 
 public class ItemManager : MonoBehaviour
 {
-    public Pawn Pawn
+    public Player Pawn
     {
         get
         {
             if (_pawn == null)
-                _pawn = GetComponent<Pawn>();
+                _pawn = GetComponent<Player>();
             return _pawn;
         }
     }
-    private Pawn _pawn;
+    private Player _pawn;
 
     public Transform ItemParent;
-    public Item ActiveItem { get { return currentIndex == -1 ? null : EquippedItems[currentIndex]; } }
+    public Item ActiveItem { get { return currentIndex == -1 ? null : equippedItems[currentIndex]; } }
 
-    public Item[] EquippedItems = new Item[3];
-    public int MaxEquippedItems { get { return EquippedItems.Length; } }
+    [SerializeField]
+    private Item[] equippedItems = new Item[3];
+    public int MaxEquippedItems { get { return equippedItems.Length; } }
     [SearchableEnum]
     public KeyCode[] Keys = new KeyCode[3] { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3 };
 
     [SerializeField]
     [ReadOnly]
     private int currentIndex = -1;
+    private UI_Hotbar hotbar;
 
     /*
      * Items can be in 3 states:
@@ -36,9 +38,10 @@ public class ItemManager : MonoBehaviour
 
     private void Awake()
     {
+        // Make sure equipped items have correct initial state.
         for (int i = 0; i < MaxEquippedItems; i++)
         {
-            var item = EquippedItems[i];
+            var item = equippedItems[i];
             if (item != null)
             {
                 item.gameObject.SetActive(true);
@@ -46,7 +49,65 @@ public class ItemManager : MonoBehaviour
                 //StartCoroutine(Disable(item));
                 item.Manager = this;
             }            
-        }        
+        }
+
+        // Setup input.
+        Player.Input.actions["Drop"].performed += ctx =>
+        {
+            Dequip(currentIndex);
+        };
+        Player.Input.actions["Next Item"].performed += ctx =>
+        {
+            bool found = false;
+            int newIndex = currentIndex + 1;
+            for (int i = 0; i < MaxEquippedItems; i++)
+            {
+                if (newIndex >= MaxEquippedItems)
+                    newIndex = 0;
+                if (newIndex < 0)
+                    newIndex = 0;
+
+                if (equippedItems[newIndex] != null)
+                {
+                    found = true;
+                    break;
+                }
+                else
+                {
+                    newIndex++;
+                }
+            }
+            if(found)
+                SetActiveItem(newIndex);
+        };
+        Player.Input.actions["Previous Item"].performed += ctx =>
+        {
+            bool found = false;
+            int newIndex = currentIndex - 1;
+            for (int i = 0; i < MaxEquippedItems; i++)
+            {
+                if (newIndex >= MaxEquippedItems)
+                    newIndex = 0;
+                if (newIndex < 0)
+                    newIndex = MaxEquippedItems - 1;
+
+                if (equippedItems[newIndex] != null)
+                {
+                    found = true;
+                    break;
+                }
+                else
+                {
+                    newIndex--;
+                }
+            }
+            if (found)
+                SetActiveItem(newIndex);
+        };
+        Player.Input.actions["Empty Hands"].performed += ctx =>
+        {
+            SetActiveItem(-1);
+        };
     }
 
     private void Update()
@@ -59,29 +120,30 @@ public class ItemManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            Dequip(currentIndex);
-        }
+        if (hotbar == null)
+            hotbar = GlobalUIElement.Get<UI_Hotbar>();
+
+        if (hotbar != null)
+            hotbar.UpdateIcons(this);
     }
 
     public void SetActiveItem(int index)
     {
         if (index < 0 || index >= MaxEquippedItems)
             index = -1;
-        if (index != -1 && EquippedItems[index] == null)
+        if (index != -1 && equippedItems[index] == null)
             index = -1;
 
         if (currentIndex == index)
             return;
 
-        Item i = index == -1 ? null : EquippedItems[index];
-        Item currentItem = currentIndex == -1 ? null : EquippedItems[currentIndex];
+        Item i = index == -1 ? null : equippedItems[index];
+        Item currentItem = currentIndex == -1 ? null : equippedItems[currentIndex];
 
         // Dequip current.
         if (currentItem != null)
         {
-            StartCoroutine(Disable(currentItem));
+            Disable(currentItem);
         }
 
         // Equip new.
@@ -111,7 +173,7 @@ public class ItemManager : MonoBehaviour
         int index = -1;
         for (int j = 0; j < MaxEquippedItems; j++)
         {
-            if (EquippedItems[j] == null)
+            if (equippedItems[j] == null)
             {
                 index = j;
                 break;
@@ -139,7 +201,7 @@ public class ItemManager : MonoBehaviour
             return null;
         }
 
-        Item item = EquippedItems[index];
+        Item item = equippedItems[index];
         if (item == null)
             return null;
 
@@ -163,7 +225,7 @@ public class ItemManager : MonoBehaviour
         item.transform.localRotation = Quaternion.identity;
         item.transform.SetParent(null, true);
         item.UponDequip();
-        EquippedItems[index] = null;
+        equippedItems[index] = null;
 
         return item;
     }
@@ -188,11 +250,19 @@ public class ItemManager : MonoBehaviour
 
         for (int j = 0; j < MaxEquippedItems; j++)
         {
-            if (EquippedItems[j] == i)
+            if (equippedItems[j] == i)
                 return j;
         }
 
         return -1;
+    }
+
+    public Item GetEquippedItem(int index)
+    {
+        if (index < 0 || index >= MaxEquippedItems)
+            return null;
+
+        return equippedItems[index];
     }
 
     private void Enable(Item i, bool sendMessage = true)
@@ -209,11 +279,11 @@ public class ItemManager : MonoBehaviour
             i.UponActivate();
     }
 
-    private IEnumerator Disable(Item i)
+    private void Disable(Item i)
     {
         // Check if already disabled.
         if (!i.Animator.gameObject.activeSelf)
-            yield return null;
+            return;
 
         i.UponDeactivate();
 
@@ -223,16 +293,8 @@ public class ItemManager : MonoBehaviour
         {
             i.Animator.SetLayerWeight(j, 0);
         }
-
-        // Out of sight, out of mind. There is a single frame where the gun appears in the idle pose, which is correct, but also looks lame.
-        // So I teleport it far away so that it can render the pose without it flickering over the screen.
-        i.transform.position = Vector3.one * 1000f;
-
-        // Wait for end of frame for that to have been applied.
-        yield return new WaitForEndOfFrame();
+        i.Animator.Update(0f);
 
         i.Animator.gameObject.SetActive(false);
-
-        yield return null;
     }
 }

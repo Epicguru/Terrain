@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraLook : MonoBehaviour
 {
@@ -19,10 +20,14 @@ public class CameraLook : MonoBehaviour
     public Transform Yaw;
     public Transform Pitch;
 
-    [Header("Controls")]
-    public float MouseSensitivity = 1f;
-    public float InternalSens = 1f;
+    [Header("Code Controls")]
     public bool CaptureMouse = true;
+
+    [Header("Sensitivities")]
+    public float MouseSensitivity = 0.1f;
+    public float GamepadSensitivity = 0.5f;
+    public float MouseADSSensitivityMultiplier = 1f;
+    public float GamepadADSSensitivityMultiplier = 0.3f;
 
     [Header("Recoil")]
     [Range(0f, 1f)]
@@ -46,11 +51,20 @@ public class CameraLook : MonoBehaviour
     private const float RECOIL_DELTA_TIME = 1f / RECOIL_FREQ;
     private List<Vector2> recoils = new List<Vector2>();
     private float recoilTimer = 0f;
+    private Vector2 input;
 
     private void Awake()
     {
         _instance = this;
         InvokeRepeating("UpdateRecoil", 0f, RECOIL_DELTA_TIME);
+        Player.Input.actions["Look"].performed += Input_Look;
+        Player.Input.actions["Look"].canceled += Input_Look;
+        Player.Input.actions["Look"].started += Input_Look;
+    }
+
+    private void Input_Look(InputAction.CallbackContext context)
+    {
+        input = context.ReadValue<Vector2>();
     }
 
     private void Update()
@@ -61,8 +75,15 @@ public class CameraLook : MonoBehaviour
         float oldX = horizontalLook;
         float oldY = verticalLook;
 
-        horizontalLook += Input.GetAxisRaw("Mouse X") * MouseSensitivity * InternalSens;
-        verticalLook -= Input.GetAxisRaw("Mouse Y") * MouseSensitivity * InternalSens;
+        // Make framerate independent: mouse delta is naturally independent, but controller input
+        // is just a normalized value, so need to be tied to the time between frames.
+        float frameRateIndependent = Player.Input.IsKeyboardAndMouse() ? 1f : Time.deltaTime;
+        Vector2 delta = input * frameRateIndependent;
+
+        delta *= CalculateCurrentSensitivity();                       
+
+        horizontalLook += delta.x;
+        verticalLook -= delta.y;
         verticalLook = Mathf.Clamp(verticalLook, -90f, 90f);
 
         Yaw.localEulerAngles = new Vector3(0f, horizontalLook + recoilOffset.x, 0f);
@@ -97,6 +118,34 @@ public class CameraLook : MonoBehaviour
                 recoilOffset = Vector2.MoveTowards(recoilOffset, Vector2.zero, RecoverySpeed * Time.deltaTime);
             }
         }        
+    }
+
+    public float CalculateCurrentSensitivity()
+    {
+        float sens = 1f;
+
+        // Keyboard vs controller changes sens.
+        sens *= Player.Input.IsKeyboardAndMouse() ? MouseSensitivity : GamepadSensitivity;
+
+        // FOV changes sens.
+        sens *= CameraFOVController.FOV_Mutliplier;
+
+        // ADS changes sensitivity...
+        float adsSens = Player.Input.IsKeyboardAndMouse() ? MouseADSSensitivityMultiplier : GamepadADSSensitivityMultiplier;
+        if (adsSens != 1f)
+        {
+            var im = Player.Instance.ItemManager;
+            if (im.ActiveItem != null)
+            {
+                var gun = im.ActiveItem.Gun;
+                if (gun != null)
+                {
+                    sens *= Mathf.Lerp(1f, adsSens, gun.ADSLerp);
+                }
+            }
+        }
+
+        return sens;
     }
 
     public void AddRecoil(Vector2 vel)

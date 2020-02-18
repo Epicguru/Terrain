@@ -225,7 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Physics:
     Radius: 0.3
-    DrawDebug: 1
+    DrawDebug: 0
     IsSleeping: 0
     Velocity: {x: 0, y: 0, z: 0}
     LayerMask:

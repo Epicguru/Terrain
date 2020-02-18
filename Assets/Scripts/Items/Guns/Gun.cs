@@ -468,8 +468,12 @@ public class Gun : MonoBehaviour
         return true;
     }
 
-    private Vector3 GenerateConeDirection(float angleDeg, Transform forwards)
+    public static Vector3 GenerateConeDirection(float angleDeg, Transform forwards)
     {
+        angleDeg = Mathf.Clamp(angleDeg, 0f, 179.5f);
+        if (angleDeg <= 0.01f)
+            return forwards.forward;
+
         const float DST = 1f;
         float r = Mathf.Tan((angleDeg * 0.5f) * Mathf.Deg2Rad) / DST;
         Vector2 onCircle = Random.insideUnitCircle.normalized * r;

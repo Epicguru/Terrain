@@ -585,7 +585,6 @@ MonoBehaviour:
   MagazineBullets: 30
   MagazineCapacity: 30
   ShotgunReload: 0
-  ShotgunReloadShellsPerReload: 1
   CanInterruptShotgunReload: 1
   HorizontalKick: {x: -30, y: 30}
   VerticalKick: {x: 20, y: 40}
@@ -648,7 +647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Physics:
     Radius: 0.5
-    DrawDebug: 1
+    DrawDebug: 0
     IsSleeping: 0
     Velocity: {x: 0, y: 0, z: 0}
     LayerMask:

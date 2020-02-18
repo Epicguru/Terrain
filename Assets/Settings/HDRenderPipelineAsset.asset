@@ -157,7 +157,7 @@ MonoBehaviour:
     type: 2}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
-      data1: 70280688107357
+      data1: 70280688099165
       data2: 4539628424926265344
     lodBias: 1
     lodBiasMode: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
     supportShadowMask: 1
     supportSSR: 0
     supportSSAO: 0
-    supportSubsurfaceScattering: 0
+    supportSubsurfaceScattering: 1
     increaseSssSampleCount: 0
     supportVolumetrics: 0
     increaseResolutionOfVolumetrics: 0
@@ -210,7 +210,7 @@ MonoBehaviour:
     supportTransparentDepthPrepass: 0
     supportTransparentDepthPostpass: 0
     colorBufferFormat: 48
-    supportCustomPass: 1
+    supportCustomPass: 0
     customBufferFormat: 12
     supportedLitShaderMode: 2
     supportDecals: 0

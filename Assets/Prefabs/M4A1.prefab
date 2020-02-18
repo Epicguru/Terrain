@@ -576,10 +576,17 @@ MonoBehaviour:
   BulletPrefab: {fileID: 190050768521553587, guid: dae0b6ae89343ca4a8cfe3d1ea3a55dd,
     type: 3}
   FireMode: 1
+  BulletRandomAngle:
+    Min: 0
+    Max: 0
+  BulletsPerShot: 1
   MaxRPM: 750
   BulletInChamber: 0
   MagazineBullets: 30
   MagazineCapacity: 30
+  ShotgunReload: 0
+  ShotgunReloadShellsPerReload: 1
+  CanInterruptShotgunReload: 1
   HorizontalKick: {x: -30, y: 30}
   VerticalKick: {x: 20, y: 40}
   KickFalloff: 0.7
@@ -2293,7 +2300,7 @@ PrefabInstance:
     - target: {fileID: 9202069602833589580, guid: e9a2b2dec63b20847ba696ce0df9fa3b,
         type: 3}
       propertyPath: CurrentMode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9a2b2dec63b20847ba696ce0df9fa3b, type: 3}

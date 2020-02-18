@@ -22,6 +22,7 @@ public class PoolObject : MonoBehaviour
         }
     }
     [SerializeField]
+    [MyBox.ReadOnly]
     private int _id;
 
     private static Transform GetParent()

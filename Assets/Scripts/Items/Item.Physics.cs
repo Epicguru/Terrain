@@ -28,7 +28,8 @@ public partial class Item
         IsSleeping = false,
         Velocity = Vector3.zero,
         LayerMask = 1,
-        SleepVelocityThreashold = 0.07f
+        SleepVelocityThreashold = 0.07f,
+        DrawDebug = false
     };
 
 	[System.Serializable]

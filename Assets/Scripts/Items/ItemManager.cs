@@ -116,7 +116,20 @@ public class ItemManager : MonoBehaviour
         {
             if (Input.GetKeyDown(Keys[i]))
             {
-                SetActiveItem(i);
+                // Try to equip the i'th item.
+                int found = 0;
+                for (int j = 0; j < equippedItems.Length; j++)
+                {
+                    if (equippedItems[j] == null)
+                        continue;
+
+                    if(found == i && found != currentIndex)
+                    {
+                        SetActiveItem(j);
+                    }
+                    found++;
+                }
+                break;
             }
         }
 

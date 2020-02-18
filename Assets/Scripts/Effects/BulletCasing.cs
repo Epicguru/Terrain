@@ -19,7 +19,9 @@ public class BulletCasing : MonoBehaviour
     public Vector3 Velocity;
     public Vector3 AngularVelocity;
     [Range(0f, 1f)]
-    public float BounceVelocityMultiplier = 0.8f;
+    public float BounceVelocityMultiplier = 0.5f;
+    [Range(0f, 1f)]
+    public float BounceFlatVelocityMultiplier = 0.8f;
     public float Lifespan = 10f;
 
     private float timer;
@@ -39,7 +41,7 @@ public class BulletCasing : MonoBehaviour
         const float MIN_SPEED = 0.005f; // 0.5cm/s
         if (Velocity.sqrMagnitude >= MIN_SPEED * MIN_SPEED && Physics.Linecast(currentPos, next, out RaycastHit hit))
         {
-            Vector3 newVel = Vector3.Reflect(Velocity, hit.normal) * BounceVelocityMultiplier;
+            Vector3 newVel = Velocity.ReflectAdvanced(hit.normal, BounceVelocityMultiplier, BounceFlatVelocityMultiplier);
 
             // Assign new velocity.
             Velocity = newVel;
@@ -51,8 +53,7 @@ public class BulletCasing : MonoBehaviour
         transform.position = next;
 
         // Update rotation. Rotation does not add or influence collision or speed.
-        float angularVelScale = Mathf.Clamp01(Velocity.magnitude / 0.1f); // Once the casing starts moving slower than 10cm/s, the rotation starts to slow down.        
-        transform.localEulerAngles += AngularVelocity * angularVelScale * Time.deltaTime;
+        transform.localEulerAngles += AngularVelocity * Time.deltaTime;
 
         // Add gravity.
         Velocity += Physics.gravity * Time.deltaTime;

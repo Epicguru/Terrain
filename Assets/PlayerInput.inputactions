@@ -377,6 +377,17 @@
                     "action": "Empty Hands",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dee5f316-aa91-44a4-b4af-183bb95f0b1c",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Empty Hands",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

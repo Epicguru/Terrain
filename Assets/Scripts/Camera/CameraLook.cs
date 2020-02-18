@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class CameraLook : MonoBehaviour
 {
@@ -16,12 +17,16 @@ public class CameraLook : MonoBehaviour
     }
     private static CameraLook _instance;
 
+    [Header("Batching")]
+    public bool ForceSRPBatching = true;
+
     [Header("References")]
     public Transform Yaw;
     public Transform Pitch;
 
     [Header("Code Controls")]
     public bool CaptureMouse = true;
+    public bool UseRigidbodyYaw = true;
 
     [Header("Sensitivities")]
     public float MouseSensitivity = 0.1f;
@@ -60,6 +65,15 @@ public class CameraLook : MonoBehaviour
         Player.Input.actions["Look"].performed += Input_Look;
         Player.Input.actions["Look"].canceled += Input_Look;
         Player.Input.actions["Look"].started += Input_Look;
+
+        if(ForceSRPBatching)
+            Invoke("EnableBatcher", 2f); // Wait 2 seconds because Unity likes to reset this property. Thanks Unity :D
+    }
+
+    private void EnableBatcher()
+    {
+        GraphicsSettings.useScriptableRenderPipelineBatching = true;
+        Debug.Log("Force enabled SRP batcher.");        
     }
 
     private void Input_Look(InputAction.CallbackContext context)
@@ -86,7 +100,10 @@ public class CameraLook : MonoBehaviour
         verticalLook -= delta.y;
         verticalLook = Mathf.Clamp(verticalLook, -90f, 90f);
 
-        Yaw.localEulerAngles = new Vector3(0f, horizontalLook + recoilOffset.x, 0f);
+        if (!UseRigidbodyYaw)
+            Yaw.localEulerAngles = new Vector3(0f, horizontalLook + recoilOffset.x, 0f);
+        else
+            Yaw.GetComponent<Rigidbody>().rotation = Quaternion.Euler(0f, horizontalLook + recoilOffset.x, 0f);
         Pitch.localEulerAngles = new Vector3(verticalLook + recoilOffset.y, 0f, 0f);
 
         if (CaptureMouse)

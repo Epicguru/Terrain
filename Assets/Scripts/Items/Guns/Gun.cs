@@ -28,18 +28,28 @@ public class Gun : MonoBehaviour
         }
     }
     private GunSlide _gunSlide;
-    public Animator Anim { get { return Item.Animator; } }
+    public Animator Anim { get { return Item.Animator; } }    
 
     [Foldout("Shooting", true)]
     public Transform Muzzle;
     public Projectile BulletPrefab;
     public FireMode FireMode = FireMode.Semi;
+    [MinMaxRange(0f, 360f)]
+    public MinMaxFloat BulletRandomAngle = new MinMaxFloat(0f, 0f);
+    [Range(1f, 64f)]
+    public int BulletsPerShot = 1;
     [PositiveValueOnly]
     public float MaxRPM = 300f;
     public bool BulletInChamber = false;
     public int MagazineBullets = 0;
     [PositiveValueOnly]
     public int MagazineCapacity = 30;
+
+    [Foldout("Reloading", true)]
+    [Tooltip("Does this gun use a shotgun-like reload? (Loading individual shots)")]
+    public bool ShotgunReload = false;
+    [Tooltip("If shotgun-like reload is enabled, the is the user allowed to interrupt the animation before all shells/bullets are loaded? Recommended true for consistency, only disable for a valid gameplay to technical reason.")]
+    public bool CanInterruptShotgunReload = true;
 
     [Foldout("Recoil", true)]
     [MyBox.Separator("Kick (Gun)")]
@@ -87,7 +97,7 @@ public class Gun : MonoBehaviour
 
     private void Awake()
     {
-        SetupInput();
+        SetupInput();        
     }
 
     private void Start()
@@ -106,6 +116,9 @@ public class Gun : MonoBehaviour
             {
                 shootPressed = true;
                 shootQueued = true;
+
+                // Interrupt recursive reload on shotguns.
+                TriggerReloadInterrupt();
             }            
         };
         input.actions["Shoot"].canceled += ctx => shootPressed = false;
@@ -163,7 +176,7 @@ public class Gun : MonoBehaviour
             slide.Override = !BulletInChamber;
             slide.OverrideLerp = 1f;
             slide.IsInTransition = Anim.IsInTransition(0);
-        }
+        }        
     }
     
     private void UpdateADS()
@@ -212,25 +225,48 @@ public class Gun : MonoBehaviour
 
                 if(fireTimer >= minInterval && shootQueued)
                 {
-                    TriggerShoot();
-                    fireTimer = 0f;
+                    if (TriggerShoot())
+                    {
+                        fireTimer = 0f;
+                    }
                     shootQueued = false;
                 }
                 break;
             case FireMode.Auto:
                 if (shootPressed && fireTimer >= minInterval)
                 {
-                    TriggerShoot();
-                    fireTimer = 0f;
+                    if (TriggerShoot())
+                    {
+                        fireTimer = 0f;
+                    }
                 }
                 break;
         }
     }
 
-    public void TriggerShoot()
+    public bool TriggerShoot()
     {
-        if(BulletInChamber)
+        bool canShoot = CanShoot();
+        if (canShoot)
+        {
             Anim.SetTrigger("Shoot");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool CanShoot()
+    {
+        if (!BulletInChamber)
+            return false;
+
+        if (IsReloading)
+            return false;
+
+        return true;
     }
 
     public void TriggerReload()
@@ -250,7 +286,13 @@ public class Gun : MonoBehaviour
         {
             // Make sure that the empty state is updated.
             Anim.SetBool("Empty", !BulletInChamber);
-            Anim.SetTrigger("Reload");
+
+            // Set trigger or bool based on animator type.
+            if (ShotgunReload)
+                Anim.SetBool("Reload", true);
+            else
+                Anim.SetTrigger("Reload");
+
             IsReloading = true;
         });
 
@@ -264,6 +306,17 @@ public class Gun : MonoBehaviour
             // If we are not aiming down sights, run this code immediately so that the animation triggers as fast as possible.
             a.Invoke();
         }
+    }
+
+    /// <summary>
+    /// Interrupt shotgun-like reloads. Has no effect on regular guns that have 'simple' reload animations.
+    /// </summary>
+    public void TriggerReloadInterrupt()
+    {
+        if (!ShotgunReload)
+            return;
+
+        Anim.SetBool("Reload", false);
     }
 
     public void TriggerInspect()
@@ -281,7 +334,12 @@ public class Gun : MonoBehaviour
 
         // If reloading, we aren't any more.
         if (IsReloading)
+        {
             IsReloading = false;
+
+            // Cancel shotgun reload or risk bugging out the weapon.
+            TriggerReloadInterrupt();
+        }
     }
 
     public void SpawnCasing()
@@ -364,9 +422,25 @@ public class Gun : MonoBehaviour
         // Spawn the bullet.
         if (BulletPrefab != null && Muzzle != null)
         {
-            var spawned = PoolObject.Spawn(BulletPrefab);
-            spawned.transform.position = Muzzle.position;
-            spawned.Velocity = Muzzle.forward * 350f;
+            for (int i = 0; i < BulletsPerShot; i++)
+            {
+                var spawned = PoolObject.Spawn(BulletPrefab);
+                spawned.transform.position = Muzzle.position;
+
+                // Velocity is calculated based on random angle - most rifles have zero random angle.
+                // Note that velocity magnitude is always maintained.
+                const float MUZZLE_VELOCITY = 350f;
+                if(BulletRandomAngle.Min == 0f && BulletRandomAngle.Max == 0)
+                {
+                    spawned.Velocity = Muzzle.forward * MUZZLE_VELOCITY;
+                }
+                else
+                {
+                    float angle = BulletRandomAngle.Lerp(Random.value);
+                    spawned.Velocity = GenerateConeDirection(angle, Muzzle) * MUZZLE_VELOCITY;
+                    Debug.DrawLine(Muzzle.position, Muzzle.position + spawned.Velocity.normalized, Color.red, 10f);
+                }
+            }            
         }
 
         // Auto re-chamber. For some weapons, such as bolt-action rifles, this is not desirable. This will be implemented later.
@@ -394,6 +468,20 @@ public class Gun : MonoBehaviour
         return true;
     }
 
+    private Vector3 GenerateConeDirection(float angleDeg, Transform forwards)
+    {
+        const float DST = 1f;
+        float r = Mathf.Tan((angleDeg * 0.5f) * Mathf.Deg2Rad) / DST;
+        Vector2 onCircle = Random.insideUnitCircle.normalized * r;
+
+        Vector3 localSpace = new Vector3(onCircle.x, onCircle.y, DST);
+        Vector3 worldSpace = forwards.TransformVector(localSpace);
+
+        //Debug.Log($"Angle: {angleDeg * 0.5f}, r: {r}");
+
+        return worldSpace.normalized;
+    }
+
     private void Rechamber()
     {
         if (MagazineBullets > 0)
@@ -408,7 +496,7 @@ public class Gun : MonoBehaviour
         ShootNow();
     }
 
-    private void OnReload()
+    private void OnReload(int shells)
     {
         if (!IsReloading)
         {
@@ -416,10 +504,26 @@ public class Gun : MonoBehaviour
             return;
         }
 
-        // Fill that magazine back up.
-        MagazineBullets = MagazineCapacity;
+        if (!ShotgunReload)
+        {
+            // Regular reload, just refil the magazine.
 
-        IsReloading = false;
+            // Fill that magazine back up.
+            MagazineBullets = MagazineCapacity;
+
+            // Reload is finished.
+            IsReloading = false;
+        }
+        else
+        {
+            // Shotgun-like reload.
+            MagazineBullets += shells;
+            MagazineBullets = Mathf.Clamp(MagazineBullets, 0, MagazineCapacity);
+
+            // If full, stop reloading.
+            if (MagazineBullets == MagazineCapacity)
+                TriggerReloadInterrupt();
+        }       
     }
 
     private void OnChamber()
@@ -440,7 +544,21 @@ public class Gun : MonoBehaviour
                 OnShoot();
                 break;
             case "reload":
-                OnReload();
+                int shells = 1;
+                if (e.intParameter != 0)
+                    shells = e.intParameter;
+                OnReload(shells);
+                break;
+            case "reloadend":
+            case "reload end":
+            case "endreload":
+            case "end reload":
+                // This should only be called from shotgun-like weapons that reload recursively.
+                if (!ShotgunReload)
+                {
+                    Debug.LogError($"Gun {Item.Name} invoked callback 'Reload End' from animation, but it is not using ShotgunReload. Use 'Reload' callback instead!");
+                }
+                IsReloading = false;
                 break;
             case "chamber":
                 OnChamber();
@@ -460,6 +578,9 @@ public class Gun : MonoBehaviour
         ADSLerp = 0f;
         shootQueued = false;
         shootPressed = false;
+
+        if(ShotgunReload)
+            Anim.SetBool("Reload", false);
     }
 }
 

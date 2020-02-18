@@ -8,7 +8,7 @@ public class UI_BlockIndicator : GlobalUIElement
     public Image Img;
 
     [Header("Controls")]
-    public bool Active = true;
+    public bool Active = false;
     public float LerpSpeedPixels = 30f;
 
     public int BlockDirection;

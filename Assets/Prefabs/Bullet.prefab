@@ -50,6 +50,11 @@ MonoBehaviour:
     m_Bits: 531
   Velocity: {x: 0, y: 0, z: 0}
   GravityScale: 1
+  MaxTime: 10
+  ImpactPrefab: {fileID: 5464134036365310866, guid: 00118cc0af0f9c14892eafa803306c60,
+    type: 3}
+  ImpactParticlesPrefab: {fileID: 8273519591758655869, guid: 5b29930216432034db643e1abf4322a8,
+    type: 3}
 --- !u!114 &190050768521553598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e5733a35721ec4f8ec09048f32f854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: 23088
+  _id: 41506
   UponSpawn:
     m_PersistentCalls:
       m_Calls: []

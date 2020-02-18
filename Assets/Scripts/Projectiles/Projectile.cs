@@ -19,8 +19,15 @@ public class Projectile : MonoBehaviour
     public Vector3 Velocity;
     public float GravityScale = 1f;
     public float MaxTime = 10f;
+    public BulletImpact ImpactPrefab;
+    public TempParticleEffect ImpactParticlesPrefab;
 
     private float timer;
+
+    private void UponSpawn()
+    {
+        timer = 0f;
+    }
 
     private void Update()
     {
@@ -41,8 +48,7 @@ public class Projectile : MonoBehaviour
         if(hit.collider != null)
         {
             // Hit a wall or something.
-            PoolObject.Despawn();
-            Debug.DrawLine(hit.point, hit.point + hit.normal * 0.5f, Color.green, 5f);
+            OnHit(hit);            
         }
 
         // Add gravity to projectile.
@@ -53,6 +59,26 @@ public class Projectile : MonoBehaviour
         if(timer >= MaxTime)
         {
             PoolObject.Despawn();
+        }
+    }
+
+    private void OnHit(RaycastHit hit)
+    {
+        //Debug.DrawLine(hit.point, hit.point + hit.normal * 0.5f, Color.green, 5f);
+
+        PoolObject.Despawn();
+        if(ImpactPrefab != null)
+        {
+            var spawned = PoolObject.Spawn(ImpactPrefab);
+            spawned.transform.SetParent(hit.collider.transform);
+            spawned.transform.position = hit.point + hit.normal * Mathf.Lerp(0.00001f, 0.005f, Random.value); // Stupid way to avoid Z-fighting.
+            spawned.transform.forward = -hit.normal;
+        }
+        if(ImpactParticlesPrefab != null)
+        {
+            var spawned = PoolObject.Spawn(ImpactParticlesPrefab);
+            spawned.transform.position = hit.point + hit.normal * 0.02f;
+            spawned.transform.forward = hit.normal;
         }
     }
 

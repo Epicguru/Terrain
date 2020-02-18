@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 4468407255396493125, guid: 8e1ef80e4c8cb55448a52c8c980f4211,
         type: 3}
       propertyPath: m_Name
-      value: Pistol Bullet Casing Variant
+      value: Rifle Bullet Casing
       objectReference: {fileID: 0}
     - target: {fileID: 4468407255396493126, guid: 8e1ef80e4c8cb55448a52c8c980f4211,
         type: 3}

@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e5733a35721ec4f8ec09048f32f854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _id: 19938
+  _id: 21020
   UponSpawn:
     m_PersistentCalls:
       m_Calls: []
@@ -66,7 +66,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Velocity: {x: 0, y: 0, z: 0}
   AngularVelocity: {x: 0, y: 0, z: 0}
-  BounceVelocityMultiplier: 0.2
+  BounceVelocityMultiplier: 0.4
+  BounceFlatVelocityMultiplier: 0.9
   Lifespan: 10
 --- !u!1 &4468407255769113619
 GameObject:

@@ -100,6 +100,27 @@ public partial class Item : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        // Destroy icon to avoid memory leaks.
+        if(IconTexture != null)
+        {
+            Destroy(IconTexture);
+            IconTexture = null;
+        }
+        if(iconRequest != null)
+        {
+            iconRequest.IsDone = true;
+            iconRequest.InputTexture = null;
+        }
+    }
+
+    [MyBox.ButtonMethod]
+    private bool RefreshIcon()
+    {
+        return RefreshIcon(false);
+    }
+
     public bool RefreshIcon(bool forceNewRequest = false)
     {
         if (!forceNewRequest)

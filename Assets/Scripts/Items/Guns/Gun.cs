@@ -28,7 +28,7 @@ public class Gun : MonoBehaviour
         }
     }
     private GunSlide _gunSlide;
-    public Animator Anim { get { return Item.Animator; } }    
+    public Animator Anim { get { return Item.Animation.Animator; } }    
 
     [Foldout("Shooting", true)]
     public Transform Muzzle;
@@ -85,12 +85,14 @@ public class Gun : MonoBehaviour
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }
-    public bool CanADS { get { return (Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") && !Anim.IsInTransition(0)) && todoAfterUnADS.Count == 0; } }
+    public bool CanADS { get { return (Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") || Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS Run")) && !Anim.IsInTransition(0) && Item.Animation.PendingActionCount == 0; } }
+    public bool CanRun { get { return !IsInADS && (Anim.GetCurrentAnimatorStateInfo(0).IsTag("Run") || Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS Run")) && !Anim.IsInTransition(0) && Item.Animation.PendingActionCount == 0; } }
 
     public float ADSLerp { get; private set; }
     public bool IsInADS { get { return ADSLerp > 0f; } }
+    public float RunLerp { get; private set; }
+    public bool IsInRun { get { return RunLerp > 0f; } }
 
-    private Queue<System.Action> todoAfterUnADS = new Queue<System.Action>();
     private float fireTimer;
     private bool shootQueued = false;
     private bool shootPressed = false;
@@ -153,6 +155,7 @@ public class Gun : MonoBehaviour
 
         UpdateShooting();
         UpdateADS();
+        UpdateRun();
 
         Anim.SetBool("Empty", !BulletInChamber);
 
@@ -195,20 +198,29 @@ public class Gun : MonoBehaviour
         {
             if(ADSLerp > 0f)
                 ADSLerp -= Time.deltaTime * (1f / time);
-            if(ADSLerp < 0f)
-            {
-                // This means we just hit the 'un ADS'ed' state. We need to run any actions that are required.
-                while(todoAfterUnADS.Count > 0)
-                {
-                    var action = todoAfterUnADS.Dequeue();
-                    action?.Invoke();
-                }
-            }
         }
         ADSLerp = Mathf.Clamp01(ADSLerp);
 
         float finalForAnimation = Mathf.Clamp01(ADSCurve.Evaluate(ADSLerp));
         Anim.SetLayerWeight(1, finalForAnimation);
+    }
+
+    private void UpdateRun()
+    {
+        bool run = Player.Instance.Movement.IsRunning;
+        const float RUN_LERP_TIME = 0.25f;
+        const float RUN_LERP_SPEED = 1f / RUN_LERP_TIME;
+
+        if(run && CanRun)
+        {
+            RunLerp += Time.deltaTime * RUN_LERP_SPEED;
+        }
+        else
+        {
+            RunLerp -= Time.deltaTime * RUN_LERP_SPEED;
+        }
+        RunLerp = Mathf.Clamp01(RunLerp);
+        Anim.SetLayerWeight(2, RunLerp);
     }
 
     private void UpdateShooting()
@@ -296,16 +308,27 @@ public class Gun : MonoBehaviour
             IsReloading = true;
         });
 
-        if (IsInADS)
+        if (IsInADS || IsInRun)
         {
             // If we are aiming down sights, run this code after ads stops. Enqueueing this will automatically cause the gun to un-ads.
-            todoAfterUnADS.Enqueue(a);
+            EnqueueOnceRegular(a);
         }
         else
         {
             // If we are not aiming down sights, run this code immediately so that the animation triggers as fast as possible.
             a.Invoke();
         }
+    }
+
+    private void EnqueueOnceRegular(System.Action a)
+    {
+        Item.Animation.AddPendingAction(new ItemAnimator.PendingAction()
+        {
+            Action = a,
+            LayerIndex = new int[] { 1, 2 },
+            LayerWeight = new float[] { 0, 0 },
+            ComparisonType = ItemAnimator.ComparisonType.LessOrEqual
+        });
     }
 
     /// <summary>
@@ -321,10 +344,10 @@ public class Gun : MonoBehaviour
 
     public void TriggerInspect()
     {
-        if (!IsInADS)
+        if (!IsInADS && !IsInRun)
             Anim.SetTrigger("Inspect");
         else
-            todoAfterUnADS.Enqueue(() => { Anim.SetTrigger("Inspect"); });
+            EnqueueOnceRegular(() => { Anim.SetTrigger("Inspect"); });
     }
 
     public void TriggerMelee()

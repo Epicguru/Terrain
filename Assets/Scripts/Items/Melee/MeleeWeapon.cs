@@ -13,7 +13,7 @@ public class MeleeWeapon : MonoBehaviour
         }
     }
     private Item _item;
-    public Animator Anim { get { return Item.Animator; } }
+    public Animator Anim { get { return Item.Animation.Animator; } }
 
     [Header("Defence")]
     public bool Block;

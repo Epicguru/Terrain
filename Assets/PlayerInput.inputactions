@@ -100,6 +100,14 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "MultiTap"
+                },
+                {
+                    "name": "Run",
+                    "type": "Button",
+                    "id": "a2702f1e-ff9b-46cb-ab0d-76741434cc2a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -386,6 +394,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Empty Hands",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "749bd4d9-3b51-4159-8c6c-455eb49675e6",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f9b5fc0-9bc2-4b7f-8972-5500fdaefb65",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

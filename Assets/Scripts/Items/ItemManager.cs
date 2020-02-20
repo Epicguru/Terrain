@@ -45,7 +45,7 @@ public class ItemManager : MonoBehaviour
             if (item != null)
             {
                 item.gameObject.SetActive(true);
-                item.Animator.gameObject.SetActive(false);
+                item.Animation.gameObject.SetActive(false);
                 //StartCoroutine(Disable(item));
                 item.Manager = this;
             }            
@@ -281,10 +281,10 @@ public class ItemManager : MonoBehaviour
     private void Enable(Item i, bool sendMessage = true)
     {
         // Check if already active.
-        if (i.Animator.gameObject.activeSelf)
+        if (i.Animation.gameObject.activeSelf)
             return;
 
-        i.Animator.gameObject.SetActive(true);
+        i.Animation.gameObject.SetActive(true);
         i.transform.localPosition = i.EquippedOffset;
         i.transform.localRotation = Quaternion.identity;
 
@@ -295,19 +295,19 @@ public class ItemManager : MonoBehaviour
     private void Disable(Item i)
     {
         // Check if already disabled.
-        if (!i.Animator.gameObject.activeSelf)
+        if (!i.Animation.gameObject.activeSelf)
             return;
 
         i.UponDeactivate();
 
         //c.Anim.Anim.enabled = false;
-        i.Animator.Play("Idle", 0);
-        for (int j = 0; j < i.Animator.layerCount; j++)
+        i.Animation.Animator.Play("Idle", 0);
+        for (int j = 0; j < i.Animation.Animator.layerCount; j++)
         {
-            i.Animator.SetLayerWeight(j, 0);
+            i.Animation.Animator.SetLayerWeight(j, 0);
         }
-        i.Animator.Update(0f);
+        i.Animation.Animator.Update(0f);
 
-        i.Animator.gameObject.SetActive(false);
+        i.Animation.gameObject.SetActive(false);
     }
 }

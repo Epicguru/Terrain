@@ -1,6 +1,5 @@
 ﻿
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -26,11 +25,15 @@ public class PlayerMovement : MonoBehaviour
     }
     private Rigidbody _body;
 
+    public bool IsMoving { get { return flatInput != Vector2.zero; } } // TODO fix to use actual body displacement (not velocity).
+    public bool IsRunning { get { return IsMoving && run && IsGrounded; } }
+    public bool IsGrounded { get; private set; }
+
     public float GravityScale = 1f;
     public float AccelerateForce = 500f;
+    public float AccelerateForceRun = 800f;
     public float DecelerateCoefficient = 50f;
     [Header("Grounding")]
-    public bool IsGrounded = false;
     [Range(0f, 90f)]
     public float MaxGroundAngle = 50f;
 
@@ -39,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 flatInput;
     private bool jump = false;
+    private bool run = false;
 
     private void Awake()
     {
@@ -46,6 +50,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (IsGrounded)
                 jump = true;
+        };
+        Player.Input.actions["Run"].started += ctx =>
+        {
+            if(Player.Input.IsKeyboardAndMouse())
+                run = true;
+        };
+        Player.Input.actions["Run"].canceled += ctx =>
+        {
+            if(Player.Input.IsKeyboardAndMouse())
+                run = false;
+        };
+        Player.Input.actions["Run"].performed += ctx =>
+        {
+            if (Player.Input.IsKeyboardAndMouse())
+                return;
+            run = !run;
         };
     }
 
@@ -62,22 +82,29 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (flatInput.sqrMagnitude > 1f)
+            if (!run)
+            {
+                if (flatInput.sqrMagnitude > 1f)
+                    flatInput.Normalize();
+            }
+            else
+            {
                 flatInput.Normalize();
+            }
         }
     }
 
     private void FixedUpdate()
     {
         // Add custom gravity.
-        Body.AddForce(Physics.gravity * GravityScale * Body.mass); // F = ma
+        Body.AddForce(Physics.gravity * GravityScale * Body.mass);
 
         // Add flat input.
         Vector3 localFlat = new Vector3(flatInput.x, 0f, flatInput.y);
         Vector3 worldFlat = transform.TransformVector(localFlat);
 
         // Add flat (WASD) movement force.
-        Body.AddForce(worldFlat * AccelerateForce);
+        Body.AddForce(worldFlat * (run ? AccelerateForceRun : AccelerateForce));
 
         // Counteract movement to reduce sliding.
         Vector3 dragVel = -Body.velocity;

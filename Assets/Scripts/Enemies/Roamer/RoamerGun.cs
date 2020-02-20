@@ -45,7 +45,7 @@ public class RoamerGun : MonoBehaviour
             }
         }
 
-        transform.localEulerAngles += new Vector3(0f, 0f, spinSpeed) * Time.deltaTime;
+        transform.localEulerAngles += new Vector3(0f, spinSpeed, 0f) * Time.deltaTime;
     }
 
     public void ShootImmediate()

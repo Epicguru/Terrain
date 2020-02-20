@@ -163,21 +163,21 @@ public class IconGen : MonoBehaviour
 
         // Record item state before taking the picture.
         bool wasEnabled = item.gameObject.activeSelf;
-        bool graphicsWasEnabled = item.Animator.gameObject.activeSelf;
+        bool graphicsWasEnabled = item.Animation.gameObject.activeSelf;
         Vector3 oldPosition = item.transform.position;
         Quaternion oldRotation = item.transform.rotation;
 
         // Enable item graphics if they were disabled.
         item.gameObject.SetActive(true);
-        item.Animator.gameObject.SetActive(true);
+        item.Animation.gameObject.SetActive(true);
 
         // Record current animation state. The current system assumes that a 'Dropped' state exists.
         // TODO Allow for items that can be held but don't have animations.
-        var currentState = item.Animator.GetCurrentAnimatorStateInfo(0);
+        var currentState = item.Animation.Animator.GetCurrentAnimatorStateInfo(0);
 
         // Play the dropped animation, place the item in the target position.
-        item.Animator.Play("Dropped", 0, 0f);
-        item.Animator.Update(0);
+        item.Animation.Animator.Play("Dropped", 0, 0f);
+        item.Animation.Animator.Update(0);
         item.transform.position = new Vector3(0f, -100f, 0f);
         item.transform.rotation = transform.rotation;
         item.transform.Rotate(0f, 90f, 0f);
@@ -211,21 +211,21 @@ public class IconGen : MonoBehaviour
         // Put item back in old state, including animation.
         item.transform.position = oldPosition;
         item.transform.rotation = oldRotation;
-        item.Animator.Play(currentState.fullPathHash, 0, currentState.normalizedTime);
-        item.Animator.Update(0);
+        item.Animation.Animator.Play(currentState.fullPathHash, 0, currentState.normalizedTime);
+        item.Animation.Animator.Update(0);
 
         // Reset item and item graphics if necessary.
         // When disabling item animator, careful to not reset the default pose.
         if (!graphicsWasEnabled)
         {
-            item.Animator.Play("Idle", 0);
-            for (int j = 0; j < item.Animator.layerCount; j++)
+            item.Animation.Animator.Play("Idle", 0);
+            for (int j = 0; j < item.Animation.Animator.layerCount; j++)
             {
-                item.Animator.SetLayerWeight(j, 0);
+                item.Animation.Animator.SetLayerWeight(j, 0);
             }
-            item.Animator.Update(0f);
+            item.Animation.Animator.Update(0f);
         }
-        item.Animator.gameObject.SetActive(graphicsWasEnabled);
+        item.Animation.gameObject.SetActive(graphicsWasEnabled);
         item.gameObject.SetActive(wasEnabled);
 
         // Create the new texture, if necessary. Otherwise the recycled texture is used.

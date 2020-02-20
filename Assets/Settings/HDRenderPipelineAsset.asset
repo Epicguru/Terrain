@@ -189,9 +189,9 @@ MonoBehaviour:
     maximumLODLevelQualityLevel: 0
     materialQuality: 0
   m_RenderPipelineSettings:
-    supportShadowMask: 1
-    supportSSR: 0
-    supportSSAO: 0
+    supportShadowMask: 0
+    supportSSR: 1
+    supportSSAO: 1
     supportSubsurfaceScattering: 1
     increaseSssSampleCount: 0
     supportVolumetrics: 0

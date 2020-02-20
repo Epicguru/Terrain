@@ -188,6 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7542563149597187443}
   - component: {fileID: 8296172667683810637}
+  - component: {fileID: 1570122415400891163}
   - component: {fileID: 8296172667683810636}
   m_Layer: 0
   m_Name: Katana
@@ -237,10 +238,22 @@ MonoBehaviour:
   Name: Katana
   DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
   EquippedOffset: {x: 0, y: -0.18, z: 0.281}
-  AllowAnimationInjection: 1
-  NonAllocInjection: 1
   LeftHandPos: {fileID: 1372195760391908520}
   RightHandPos: {fileID: 5647073497973113803}
+--- !u!114 &1570122415400891163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6843159023280713568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e0fabdd28a17894da1384de03c810ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllowAnimationInjection: 0
+  NonAllocInjection: 1
 --- !u!114 &8296172667683810636
 MonoBehaviour:
   m_ObjectHideFlags: 0

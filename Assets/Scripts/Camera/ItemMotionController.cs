@@ -3,6 +3,7 @@ using MyBox;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class ItemMotionController : MonoBehaviour
 {
     public static ItemMotionController Instance
@@ -19,6 +20,7 @@ public class ItemMotionController : MonoBehaviour
     public ItemManager ItemManager;
     public Animator Animator;
     public Transform AnimTransform { get { return Animator.transform; } }
+    public bool RunInEditMode = true;
 
     [ReadOnly]
     public float AnimWeight = 1f;
@@ -43,12 +45,18 @@ public class ItemMotionController : MonoBehaviour
 
     private void Update()
     {
+        if (!Application.isPlaying && !RunInEditMode)
+            return;
+
+        UpdateAnimator();
+
         AnimWeight = 1f;
         Gun gun = null;
         if (ItemManager.ActiveItem != null && ItemManager.ActiveItem.IsGun)
             gun = ItemManager.ActiveItem.Gun;
         if(gun != null)
             AnimWeight = 1f - gun.ADSLerp;
+
 
         Vector3 pos = AnimTransform.localPosition * AnimWeight;
         Vector3 rot = AnimTransform.localEulerAngles * AnimWeight;
@@ -57,6 +65,15 @@ public class ItemMotionController : MonoBehaviour
 
         transform.localPosition = pos;
         transform.localEulerAngles = rot;
+    }
+
+    private void UpdateAnimator()
+    {
+        bool move = Player.Instance.Movement.IsMoving;
+        bool run = Player.Instance.Movement.IsRunning;
+
+        Animator.SetBool("New Bool", run); // Animator panel is super bugged (2020.1a23) so can't change bool name.
+        Animator.SetBool("Walk", move);
     }
 
     public void AddPunch(Vector3 anglesVel, float falloff)

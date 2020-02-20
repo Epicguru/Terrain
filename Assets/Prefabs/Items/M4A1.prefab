@@ -536,8 +536,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4337610293523958633}
-  - component: {fileID: 8296172667674482182}
   - component: {fileID: 8296172667674482183}
+  - component: {fileID: -7611594497179270932}
+  - component: {fileID: 8296172667674482182}
   m_Layer: 0
   m_Name: M4A1
   m_TagString: Untagged
@@ -560,6 +561,48 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8296172667674482183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 750148733148346746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8aa5c0373e11af43848bb725aec613c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Physics:
+    Radius: 0.5
+    DrawDebug: 0
+    IsSleeping: 0
+    Velocity: {x: 0, y: 0, z: 0}
+    LayerMask:
+      serializedVersion: 2
+      m_Bits: 1
+    SleepVelocityThreashold: 0.07
+    SleepPosition: {x: 0, y: 0, z: 0}
+    sleepTimer: 0
+  Name: M4A1
+  DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
+  EquippedOffset: {x: 0, y: 0, z: 0}
+  LeftHandPos: {fileID: 1541795688}
+  RightHandPos: {fileID: 1983017103}
+--- !u!114 &-7611594497179270932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 750148733148346746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e0fabdd28a17894da1384de03c810ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AllowAnimationInjection: 0
+  NonAllocInjection: 1
 --- !u!114 &8296172667674482182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -633,36 +676,6 @@ MonoBehaviour:
   CasingData: {fileID: 11400000, guid: f8182d5af69aa0b4d8040e92053b5e2d, type: 2}
   MuzzleFlashPrefab: {fileID: 4372550964283640380, guid: bef8429b1da3e9e4fa701d8ff7bfca57,
     type: 3}
---- !u!114 &8296172667674482183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 750148733148346746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8aa5c0373e11af43848bb725aec613c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Physics:
-    Radius: 0.5
-    DrawDebug: 0
-    IsSleeping: 0
-    Velocity: {x: 0, y: 0, z: 0}
-    LayerMask:
-      serializedVersion: 2
-      m_Bits: 1
-    SleepVelocityThreashold: 0.07
-    SleepPosition: {x: 0, y: 0, z: 0}
-    sleepTimer: 0
-  Name: M4A1
-  DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
-  EquippedOffset: {x: 0, y: 0, z: 0}
-  AllowAnimationInjection: 0
-  NonAllocInjection: 1
-  LeftHandPos: {fileID: 1541795688}
-  RightHandPos: {fileID: 1983017103}
 --- !u!1 &2507985110418966783
 GameObject:
   m_ObjectHideFlags: 0

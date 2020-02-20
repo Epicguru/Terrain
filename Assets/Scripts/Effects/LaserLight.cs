@@ -24,6 +24,11 @@ public class LaserLight : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            CurrentMode = (Mode)(((int)CurrentMode + 1) % 4);
+        }
+
         SpotLight.enabled = CurrentMode == Mode.Light || CurrentMode == Mode.Both;
         LaserTipLight.enabled = CurrentMode == Mode.Laser || CurrentMode == Mode.Both;
         Renderer.enabled = CurrentMode == Mode.Laser || CurrentMode == Mode.Both;

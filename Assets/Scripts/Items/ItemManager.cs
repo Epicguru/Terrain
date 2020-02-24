@@ -17,6 +17,8 @@ public class ItemManager : MonoBehaviour
 
     public Transform ItemParent;
     public Item ActiveItem { get { return currentIndex == -1 ? null : equippedItems[currentIndex]; } }
+    public int ActiveItemIndex { get { return currentIndex; } }
+    public bool AllowSwapping = true;
 
     [SerializeField]
     private Item[] equippedItems = new Item[3];
@@ -149,6 +151,11 @@ public class ItemManager : MonoBehaviour
 
         if (currentIndex == index)
             return;
+        if (!AllowSwapping)
+        {
+            Debug.LogWarning($"Currently item swapping is disabled. This is normally due to some cutscene, animation or interaction.");
+            return;
+        }
 
         Item i = index == -1 ? null : equippedItems[index];
         Item currentItem = currentIndex == -1 ? null : equippedItems[currentIndex];
@@ -219,6 +226,12 @@ public class ItemManager : MonoBehaviour
             return null;
 
         bool isActive = index == currentIndex;
+
+        if(isActive && !AllowSwapping)
+        {
+            Debug.LogWarning("Cannot dequip current item because swapping is currently disabled. This is normally due to a cutscene, animation or interaction.");
+            return null;
+        }
 
         if (!isActive)
         {

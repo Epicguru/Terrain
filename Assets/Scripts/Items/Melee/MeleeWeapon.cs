@@ -66,6 +66,9 @@ public class MeleeWeapon : MonoBehaviour
 
         UpdateBlocking();
 
+        // Update item run flag: melee weapons don't allow running while blocking.
+        Item.AllowRunning = !Block;
+
         Anim.SetInteger("BlockDirection", BlockDirection);
 
         Anim.SetBool("Block", Block);
@@ -79,7 +82,14 @@ public class MeleeWeapon : MonoBehaviour
 
     public void TriggerCustom()
     {
-        Anim.SetTrigger("Custom");
+        System.Action a = () => { Anim.SetTrigger("Custom"); };
+        Item.Animation.AddPendingAction(new ItemAnimator.PendingAction()
+        {
+            Action = a,
+            LayerIndex = new int[] { 1 },
+            LayerWeight = new float[] { 0f },
+            ComparisonType = ItemAnimator.ComparisonType.LessOrEqual
+        });
     }
 
     public void TriggerCustomExit()
@@ -93,7 +103,7 @@ public class MeleeWeapon : MonoBehaviour
         {
             Anim.SetInteger("AttackVariant", variant);
             Anim.SetTrigger("Attack");
-        }
+        }               
     }
 
     public void TriggerBlockHit(int direction)
@@ -145,6 +155,9 @@ public class MeleeWeapon : MonoBehaviour
     private void UpdateUI()
     {
         var block = GlobalUIElement.Get<UI_BlockIndicator>();
+        if (block == null)
+            return;
+
         block.Active = Block;
         block.BlockDirection = BlockDirection;
     }

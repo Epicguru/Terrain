@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class ItemAnimator : MonoBehaviour
+public class ItemAnimator : AnimationInjector
 {
     public Item Item
     {
@@ -16,52 +16,42 @@ public class ItemAnimator : MonoBehaviour
         }
     }
     private Item _item;
-    public Animator Animator
-    {
-        get
-        {
-            if(_anim == null)
-                _anim = GetComponentInChildren<Animator>();
-            return _anim;
-        }
-    }
-    private Animator _anim;    
 
     public int PendingActionCount { get { return actions.Count; } }
 
-    [Header("Animation Injection")]
-    [Tooltip("Enable to allow animation clips to be dynamically swapped at runtime. This has a small overhead, so only use if necessary. Most items with complex animation, such as weapons, will require this. This value has no effect if changed at runtime.")]
-    public bool AllowAnimationInjection = false;
-    [Tooltip("When set to true, animation overrides are cached to allow for faster injection with no GC allocation. However, memory usage may increase.")]
-    public bool NonAllocInjection = true;
+    [Header("General")]
+    [Min(0.01f)]
+    public float IdleSpeedMultiplier = 1f;
 
-    private List<KeyValuePair<AnimationClip, AnimationClip>> clips;
-    private bool allowInjection = false;
-    private bool useNonAllocInjection = false;
+    private bool updateIdleSpeed = false;
     private readonly List<PendingAction> actions = new List<PendingAction>();
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (AllowAnimationInjection && Animator != null)
-        {
-            // Clone the animator to allow for runtime clip replacing.
-            Animator.runtimeAnimatorController = Animator.runtimeAnimatorController.CreateClone();
-            allowInjection = true;
-
-            if (NonAllocInjection)
-            {
-                clips = (Animator.runtimeAnimatorController as AnimatorOverrideController).GetOverrides();
-                useNonAllocInjection = true;
-            }
-        }
+        base.Awake();
+        
+        if (Animator != null && Animator.HasParameter("IdleSpeed", AnimatorControllerParameterType.Float))
+            updateIdleSpeed = true;
     }
 
     private void Update()
     {
+        UpdateIdleSpeed();
+        UpdateActions();
+    }
+
+    private void UpdateIdleSpeed()
+    {
+        if (updateIdleSpeed)
+            Animator.SetFloat("IdleSpeed", IdleSpeedMultiplier);
+    }
+
+    private void UpdateActions()
+    {
         for (int i = 0; i < actions.Count; i++)
         {
             var action = actions[i];
-            if(action.Action == null)
+            if (action.Action == null)
             {
                 actions.RemoveAt(i);
                 i--;
@@ -90,8 +80,8 @@ public class ItemAnimator : MonoBehaviour
                 {
                     allTrue = false;
                     break;
-                }               
-            }            
+                }
+            }
 
             if (allTrue)
             {
@@ -104,91 +94,19 @@ public class ItemAnimator : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Replaces an animation clip with another one. This only works when <see cref="AllowAnimationInjection"/> is enabled (it cannot be enabled at runtime).
-    /// </summary>
-    /// <param name="name">The name of the original animation clip. The name is the name of the clip, not the name of the state.</param>
-    /// <param name="c">The new animation clip to replace it with. If null, the base animation is used. In most cases, this will not give good results, so avoid null unless you know what you are doing.</param>
-    /// <returns>True if the operation was successful, false otherwise. See console for reasons why this might have failed.</returns>
-    public bool InjectAnimation(string name, AnimationClip c)
-    {
-        if (Animator == null)
-        {
-            Debug.LogWarning($"Cannot inject to animation slot '{name}' because this item {Item.Name} has no animation component.");
-            return false;
-        }
-        if (!allowInjection)
-        {
-            Debug.LogWarning($"Cannot inject to animation slot '{name}' because this item ({name}) does not support animation injection. In the inspector, enable 'Allow Animation Injection'. This value cannot be changed through code at runtime.");
-            return false;
-        }
-
-        if (useNonAllocInjection)
-        {
-            // Faster, no GC waste generated. However, if there are many instances of this item in the world, it could increase memory usage.
-            return (Animator.runtimeAnimatorController as AnimatorOverrideController).ReplaceAnimation(clips, name, c);
-        }
-        else
-        {
-            // Slower, and fairly high GC waste generated. Avoid without good reason.
-            return (Animator.runtimeAnimatorController as AnimatorOverrideController).ReplaceAnimation(name, c);
-        }
-    }
-
-    /// <summary>
-    /// Replaces an animation clip with another one. This only works when <see cref="AllowAnimationInjection"/> is enabled (it cannot be enabled at runtime).
-    /// </summary>
-    /// <param name="index">The index of the clip to replace.</param>
-    /// <param name="c">The new animation clip to replace it with. If null, the base animation is used. In most cases, this will not give good results, so avoid null unless you know what you are doing.</param>
-    /// <returns>True if the operation was successful, false otherwise. See console for reasons why this might have failed.</returns>
-    public bool InjectAnimation(int index, AnimationClip c)
-    {
-        if (Animator == null)
-        {
-            Debug.LogWarning($"Cannot inject to animation slot '{name}' because this item {Item.Name} has no animation component.");
-            return false;
-        }
-        if (!allowInjection)
-        {
-            Debug.LogWarning($"Cannot inject to animation slot '{name}' because this item ({name}) does not support animation injection. In the inspector, enable 'Allow Animation Injection'. This value cannot be changed through code at runtime.");
-            return false;
-        }
-
-        if (useNonAllocInjection)
-        {
-            // Faster, no GC waste generated. However, if there are many instances of this item in the world, it could increase memory usage.
-            return (Animator.runtimeAnimatorController as AnimatorOverrideController).ReplaceAnimation(clips, name, c);
-        }
-        else
-        {
-            // Slower, and fairly high GC waste generated. Avoid without good reason.
-            return (Animator.runtimeAnimatorController as AnimatorOverrideController).ReplaceAnimation(name, c);
-        }
-    }
-
-    /// <summary>
-    /// Gets the index corresponding to an animation clip. This can be used in <see cref="InjectAnimation(int, AnimationClip)"/> since it is faster than passing in a name.
-    /// </summary>
-    /// <param name="name">The name of the clip. Case sensitive and whitespace is not removed.</param>
-    /// <returns>The index of the animation clip, or -1 if the clip was not found.</returns>
-    public int GetAnimationClipIndex(string name)
-    {
-        return Animator.runtimeAnimatorController.GetClipIndex(name);
-    }
-
     public void AddPendingAction(PendingAction action)
     {
-        if(action.Action == null)
+        if (action.Action == null)
         {
             Debug.LogWarning("Invalid action: Action is null.");
             return;
         }
-        if(action.LayerIndex == null || action.LayerWeight == null)
+        if (action.LayerIndex == null || action.LayerWeight == null)
         {
             Debug.LogWarning("Null array(s?): layer index or weight.");
             return;
         }
-        if(action.LayerIndex.Length != action.LayerWeight.Length)
+        if (action.LayerIndex.Length != action.LayerWeight.Length)
         {
             Debug.LogWarning("Layer index / weight array length mismatch.");
             return;
@@ -205,7 +123,7 @@ public class ItemAnimator : MonoBehaviour
                 Debug.LogWarning($"Action has invalid target weight: {action.LayerWeight}. This will be clamped to the 0-1 range.");
                 action.LayerWeight[i] = Mathf.Clamp01(action.LayerWeight[i]);
             }
-        }        
+        }
 
         actions.Add(action);
     }

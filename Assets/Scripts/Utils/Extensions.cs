@@ -39,4 +39,20 @@ public static class Extensions
     }
 
     #endregion
+
+    #region Animation
+
+    public static bool HasParameter(this Animator anim, string name, AnimatorControllerParameterType type)
+    {
+        foreach (var param in anim.parameters)
+        {
+            if (param.name.Equals(name) && param.type == type)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    #endregion
 }

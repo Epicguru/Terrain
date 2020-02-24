@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &1661350461
 Transform:
@@ -206,6 +206,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8167916057049135746, guid: 9b2ade0cec0432c4c85ba134e99941ae,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 9b2ade0cec0432c4c85ba134e99941ae,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -261,10 +266,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: 9b2ade0cec0432c4c85ba134e99941ae,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 9b2ade0cec0432c4c85ba134e99941ae,
         type: 3}
       propertyPath: m_Name
       value: Desk Light
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 9b2ade0cec0432c4c85ba134e99941ae,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889862876157036414, guid: 9b2ade0cec0432c4c85ba134e99941ae,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b2ade0cec0432c4c85ba134e99941ae, type: 3}

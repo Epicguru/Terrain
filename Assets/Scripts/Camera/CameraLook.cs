@@ -17,12 +17,17 @@ public class CameraLook : MonoBehaviour
     }
     private static CameraLook _instance;
 
+    [Header("Override")]
+    public bool Override = false;
+    public Vector3 OverrideTargetDirection = Vector3.forward;
+
     [Header("Batching")]
     public bool ForceSRPBatching = true;
 
     [Header("References")]
     public Transform Yaw;
     public Transform Pitch;
+    public Camera Camera;
 
     [Header("Code Controls")]
     public bool CaptureMouse = true;
@@ -83,6 +88,35 @@ public class CameraLook : MonoBehaviour
 
     private void Update()
     {
+        if (Override)
+        {
+            HorizontalTurnDelta = 0f;
+            VerticalTurnDelta = 0f;
+            recoils.Clear();
+
+            Vector3 dir = OverrideTargetDirection;
+            if (dir.sqrMagnitude != 1f)
+                dir.Normalize();
+
+            // Check for (0, 0, 0) vector.
+            if (dir.sqrMagnitude <= 0.01f)
+                return;
+
+            Quaternion rot = Quaternion.LookRotation(dir, -Physics.gravity);
+            Vector3 angles = rot.eulerAngles;
+
+            verticalLook = angles.x;
+            horizontalLook = angles.y;
+
+            if (!UseRigidbodyYaw)
+                Yaw.localEulerAngles = new Vector3(0f, horizontalLook, 0f);
+            else
+                Yaw.GetComponent<Rigidbody>().rotation = Quaternion.Euler(0f, horizontalLook, 0f);
+            Pitch.localEulerAngles = new Vector3(verticalLook, 0f, 0f);
+
+            return;
+        }
+
         if (!RecoveryMode)
             recoilOffset = Vector2.zero;
 

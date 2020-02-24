@@ -46,6 +46,7 @@ public partial class Item : MonoBehaviour
     public bool IsGun { get { return Gun != null; } }
     public bool IsMeleeWeapon { get { return MeleeWeapon != null; } }
     public ItemManager Manager { get; internal set; }
+    public bool AllowRunning { get; set; } = true;
 
     [Header("Details")]
     public string Name;

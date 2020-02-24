@@ -1,10 +1,11 @@
 ﻿
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    public Player Pawn
+    public Player Player
     {
         get
         {
@@ -25,8 +26,31 @@ public class PlayerMovement : MonoBehaviour
     }
     private Rigidbody _body;
 
+    public bool Override { get; set; } = false;
+    public Vector3 OverridePosition { get; set; }
     public bool IsMoving { get { return flatInput != Vector2.zero; } } // TODO fix to use actual body displacement (not velocity).
-    public bool IsRunning { get { return IsMoving && run && IsGrounded; } }
+    public bool IsRunning { get { return CanRun && run; } }
+    public bool CanRun
+    {
+        get
+        {
+            if (!IsMoving)
+                return false;
+
+            if (!IsGrounded)
+                return false;
+
+            var currentItem = Player.ItemManager.ActiveItem;
+            if(currentItem != null)
+            {
+                return currentItem.AllowRunning;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
     public bool IsGrounded { get; private set; }
 
     public float GravityScale = 1f;
@@ -39,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jumping")]
     public float JumpVel = 8f;
+    public Action OnJump;
 
     private Vector2 flatInput;
     private bool jump = false;
@@ -82,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (!run)
+            if (!IsRunning)
             {
                 if (flatInput.sqrMagnitude > 1f)
                     flatInput.Normalize();
@@ -94,8 +119,26 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void FixedAnimationUpdate()
+    {
+        IsGrounded = false;
+        Body.position = OverridePosition;
+    }
+
     private void FixedUpdate()
     {
+        // Set kinematic state.
+        bool kinematic = Override;
+        if (kinematic != Body.isKinematic)
+            Body.isKinematic = kinematic;
+
+        // Go no further if kinematic (animation / cutscene control)
+        if (kinematic)
+        {
+            FixedAnimationUpdate();
+            return;
+        }
+
         // Add custom gravity.
         Body.AddForce(Physics.gravity * GravityScale * Body.mass);
 
@@ -104,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 worldFlat = transform.TransformVector(localFlat);
 
         // Add flat (WASD) movement force.
-        Body.AddForce(worldFlat * (run ? AccelerateForceRun : AccelerateForce));
+        Body.AddForce(worldFlat * (IsRunning ? AccelerateForceRun : AccelerateForce));
 
         // Counteract movement to reduce sliding.
         Vector3 dragVel = -Body.velocity;
@@ -116,6 +159,8 @@ public class PlayerMovement : MonoBehaviour
         {
             jump = false;
             Body.AddForce(-Physics.gravity.normalized * JumpVel, ForceMode.VelocityChange);
+            if (OnJump != null)
+                OnJump.Invoke();
         }
 
         IsGrounded = false;
@@ -123,6 +168,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
+        if (Override)
+            return;
+
         Vector3 up = -Physics.gravity.normalized;
 
         // Find out what value to compare our 'flatness' to. Evaluates to 1 when 0deg, 0 when 90deg.

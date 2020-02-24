@@ -78,7 +78,12 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 88e7f2cf9df810944972476e875aaa66,
         type: 3}
       propertyPath: m_Name
-      value: Whiteboard Small Variant
+      value: Whiteboard Small
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 88e7f2cf9df810944972476e875aaa66,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88e7f2cf9df810944972476e875aaa66, type: 3}

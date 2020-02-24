@@ -58,9 +58,8 @@ public class ItemMotionController : MonoBehaviour
             AnimWeight = 1f - gun.ADSLerp;
 
 
-        Vector3 pos = AnimTransform.localPosition * AnimWeight;
-        Vector3 rot = AnimTransform.localEulerAngles * AnimWeight;
-
+        Vector3 pos = Vector3.Lerp(Vector3.zero, AnimTransform.localPosition, AnimWeight);
+        Vector3 rot = Quaternion.Lerp(Quaternion.identity, AnimTransform.localRotation, AnimWeight).eulerAngles;
         rot += AnglePunch;
 
         transform.localPosition = pos;
@@ -71,6 +70,9 @@ public class ItemMotionController : MonoBehaviour
     {
         bool move = Player.Instance.Movement.IsMoving;
         bool run = Player.Instance.Movement.IsRunning;
+
+        if (Animator.runtimeAnimatorController == null)
+            return;
 
         Animator.SetBool("New Bool", run); // Animator panel is super bugged (2020.1a23) so can't change bool name.
         Animator.SetBool("Walk", move);

@@ -20,6 +20,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5180251234891401875, guid: ec75ba41cd96bb74381bed71868802b3,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ec75ba41cd96bb74381bed71868802b3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -75,10 +80,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: ec75ba41cd96bb74381bed71868802b3,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: ec75ba41cd96bb74381bed71868802b3,
         type: 3}
       propertyPath: m_Name
       value: Drawers Tiny
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: ec75ba41cd96bb74381bed71868802b3,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 7783071376730531565, guid: ec75ba41cd96bb74381bed71868802b3,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec75ba41cd96bb74381bed71868802b3, type: 3}

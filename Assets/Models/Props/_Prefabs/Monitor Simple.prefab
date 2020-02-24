@@ -29,7 +29,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &8091141289472892898
 Transform:
@@ -219,6 +219,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9031679628804357129, guid: ad788c9347605fb42879d52433075708,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ad788c9347605fb42879d52433075708,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -274,10 +279,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2838134616944236917, guid: ad788c9347605fb42879d52433075708,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: ad788c9347605fb42879d52433075708,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: ad788c9347605fb42879d52433075708,
         type: 3}
       propertyPath: m_Name
       value: Monitor Simple
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: ad788c9347605fb42879d52433075708,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad788c9347605fb42879d52433075708, type: 3}

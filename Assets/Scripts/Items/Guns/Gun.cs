@@ -1,9 +1,7 @@
 
 using MyBox;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.Controls;
 
 [RequireComponent(typeof(Item))]
 public class Gun : MonoBehaviour
@@ -85,8 +83,7 @@ public class Gun : MonoBehaviour
 
     public int TotalCurrentBullets { get { return MagazineBullets + (BulletInChamber ? 1 : 0); } }
     public bool IsReloading { get; protected set; }
-    public bool CanADS { get { return (Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") || Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS Run")) && !Anim.IsInTransition(0) && Item.Animation.PendingActionCount == 0; } }
-    public bool CanRun { get { return !IsInADS && (Anim.GetCurrentAnimatorStateInfo(0).IsTag("Run") || Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS Run")) && !Anim.IsInTransition(0) && Item.Animation.PendingActionCount == 0; } }
+    public bool CanADS { get { return Anim.GetCurrentAnimatorStateInfo(0).IsTag("ADS") && !Anim.IsInTransition(0) && Item.Animation.PendingActionCount == 0; } }
 
     public float ADSLerp { get; private set; }
     public bool IsInADS { get { return ADSLerp > 0f; } }
@@ -155,8 +152,11 @@ public class Gun : MonoBehaviour
 
         UpdateShooting();
         UpdateADS();
-        UpdateRun();
 
+        // Update item 'allow run' flag: gun's don't allow the player to run while aiming down sights.
+        Item.AllowRunning = !IsInADS;
+
+        // Update Empty bool flag.
         Anim.SetBool("Empty", !BulletInChamber);
 
         // There is no bullet in chamber, but there are bullets in magazine.
@@ -205,24 +205,6 @@ public class Gun : MonoBehaviour
         Anim.SetLayerWeight(1, finalForAnimation);
     }
 
-    private void UpdateRun()
-    {
-        bool run = Player.Instance.Movement.IsRunning;
-        const float RUN_LERP_TIME = 0.25f;
-        const float RUN_LERP_SPEED = 1f / RUN_LERP_TIME;
-
-        if(run && CanRun)
-        {
-            RunLerp += Time.deltaTime * RUN_LERP_SPEED;
-        }
-        else
-        {
-            RunLerp -= Time.deltaTime * RUN_LERP_SPEED;
-        }
-        RunLerp = Mathf.Clamp01(RunLerp);
-        Anim.SetLayerWeight(2, RunLerp);
-    }
-
     private void UpdateShooting()
     {
         if (FireMode != FireMode.Semi)
@@ -267,7 +249,7 @@ public class Gun : MonoBehaviour
         else
         {
             return false;
-        }
+        }       
     }
 
     public bool CanShoot()
@@ -325,8 +307,8 @@ public class Gun : MonoBehaviour
         Item.Animation.AddPendingAction(new ItemAnimator.PendingAction()
         {
             Action = a,
-            LayerIndex = new int[] { 1, 2 },
-            LayerWeight = new float[] { 0, 0 },
+            LayerIndex = new int[] { 1 },
+            LayerWeight = new float[] { 0 },
             ComparisonType = ItemAnimator.ComparisonType.LessOrEqual
         });
     }

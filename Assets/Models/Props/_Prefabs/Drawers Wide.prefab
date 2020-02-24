@@ -100,6 +100,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drawers Wide
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: c3714e50cc213074e9e9291a08dfad50,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 8596628243104348992, guid: c3714e50cc213074e9e9291a08dfad50,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3714e50cc213074e9e9291a08dfad50, type: 3}
 --- !u!1 &6112155140763566357 stripped

@@ -21,6 +21,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8386219304998543929, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6766043603459085083, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6374528589357692267, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: -6301675491723998984, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -6049132901782458843, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: -4678225195677322229, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 362533dfcf09ef64d911592e44fe4f2e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -76,10 +106,60 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2802600884535936226, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: -1504981713932161579, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 362533dfcf09ef64d911592e44fe4f2e,
         type: 3}
       propertyPath: m_Name
       value: Small Plantpot
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2213885413763836315, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2827558242802770478, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3683378698629452778, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3786386327827935106, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3882923146831044182, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 3887361288467762356, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 5374008345651551294, guid: 362533dfcf09ef64d911592e44fe4f2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 362533dfcf09ef64d911592e44fe4f2e, type: 3}

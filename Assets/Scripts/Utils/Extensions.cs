@@ -55,4 +55,32 @@ public static class Extensions
     }
 
     #endregion
+
+    #region Item Rarity
+
+    public static Color GetColor(this ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Common:
+                return new Color(0.6132076f, 0.6132076f, 0.6132076f, 1f);
+
+            case ItemRarity.Uncommon:
+                return new Color(0.3224012f, 0.990566f, 0.3663174f, 1f);
+
+            case ItemRarity.Rare:
+                return new Color(0.2548505f, 0.3988582f, 0.7830189f, 1f);
+
+            case ItemRarity.UltraRare:
+                return new Color(1f, 0.3537736f, 0.8362778f, 1f);
+
+            case ItemRarity.Legendary:
+                return new Color(0.9736655f, 1f, 0.0990566f, 1f);
+
+            default:
+                return Color.white;                
+        }
+    }
+
+    #endregion
 }

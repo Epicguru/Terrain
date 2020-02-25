@@ -235,7 +235,6 @@ public class IconGen : MonoBehaviour
         else
             texture = new Texture2D(iconWidth, iconHeight, rt.graphicsFormat, 0, TextureCreationFlags.None);
 
-        texture.alphaIsTransparency = true;
         texture.hideFlags = HideFlags.HideAndDontSave;
 
         // Copy over the render texture to the new texture.

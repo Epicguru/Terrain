@@ -10,6 +10,8 @@ using UnityEngine;
 public partial class Item : MonoBehaviour
 {
     public static float DroppedSpinSpeed { get; set; } = 90;
+    public static IReadOnlyList<Item> DroppedItems { get { return _dropped; } }
+    private static List<Item> _dropped = new List<Item>();
 
     public ItemAnimator Animation
     {
@@ -50,10 +52,11 @@ public partial class Item : MonoBehaviour
 
     [Header("Details")]
     public string Name;
+    public ItemRarity Rarity = ItemRarity.Common;
     public Texture DefaultIcon;
 
     [Header("Equipped")]
-    public Vector3 EquippedOffset;    
+    public Vector3 EquippedOffset;
 
     [Header("Hands")]
     public Transform LeftHandPos;
@@ -72,27 +75,30 @@ public partial class Item : MonoBehaviour
                 return ItemState.Equipped;
         }
     }
-    
+
     private IconGen.Request iconRequest;
 
     private void Awake()
-    {        
-        gameObject.layer = SortingLayer.NameToID("Items");        
+    {
+        gameObject.layer = SortingLayer.NameToID("Items");
+        _dropped.Add(this);
     }
 
     private void OnDestroy()
     {
         // Destroy icon to avoid memory leaks.
-        if(IconTexture != null)
+        if (IconTexture != null)
         {
             Destroy(IconTexture);
             IconTexture = null;
         }
-        if(iconRequest != null)
+        if (iconRequest != null)
         {
             iconRequest.IsDone = true;
             iconRequest.InputTexture = null;
         }
+        if (_dropped.Contains(this))
+            _dropped.Remove(this);
     }
 
     [MyBox.ButtonMethod]
@@ -113,7 +119,7 @@ public partial class Item : MonoBehaviour
         }
 
         // Cancel prevoious request, if it exists.
-        if(iconRequest != null)
+        if (iconRequest != null)
         {
             iconRequest.IsDone = true;
             iconRequest.InputTexture = null;
@@ -127,7 +133,7 @@ public partial class Item : MonoBehaviour
             InputTexture = IconTexture,
             OnComplete = newIcon =>
             {
-                if(newIcon != IconTexture)
+                if (newIcon != IconTexture)
                 {
                     Destroy(IconTexture);
                 }
@@ -147,12 +153,18 @@ public partial class Item : MonoBehaviour
     {
         transform.localPosition = EquippedOffset;
         transform.localRotation = Quaternion.identity;
-        BroadcastMessage("OnEquip",  SendMessageOptions.DontRequireReceiver);
+        BroadcastMessage("OnEquip", SendMessageOptions.DontRequireReceiver);
+
+        if (_dropped.Contains(this))
+            _dropped.Remove(this);
     }
 
     public void UponDequip()
     {
         BroadcastMessage("OnDequip", SendMessageOptions.DontRequireReceiver);
+
+        if (!_dropped.Contains(this))
+            _dropped.Add(this);
     }
 
     public void UponActivate()
@@ -175,7 +187,7 @@ public partial class Item : MonoBehaviour
             transform.localPosition = EquippedOffset;
             transform.localRotation = Quaternion.identity;
         }
-        else if(State == ItemState.Dropped)
+        else if (State == ItemState.Dropped)
         {
             transform.localEulerAngles += new Vector3(0f, DroppedSpinSpeed, 0f) * Time.deltaTime;
         }

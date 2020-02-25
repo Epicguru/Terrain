@@ -6,6 +6,11 @@ using UnityEditor;
 
 public class EditorRuntimeShortcuts : MonoBehaviour
 {
+    private void Awake()
+    {
+        Debug.Log("Editor runtime shortcuts ready!");
+    }
+
 #if UNITY_EDITOR
     private void Update()
     {

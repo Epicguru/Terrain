@@ -50,6 +50,7 @@ public class ItemManager : MonoBehaviour
                 item.Animation.gameObject.SetActive(false);
                 //StartCoroutine(Disable(item));
                 item.Manager = this;
+                item.UponEquip();
             }            
         }
 

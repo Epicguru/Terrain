@@ -912,10 +912,13 @@ MonoBehaviour:
     SleepPosition: {x: 0, y: 0, z: 0}
     sleepTimer: 0
   Name: G18
+  Rarity: 1
   DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
   EquippedOffset: {x: 0, y: 0, z: 0}
   LeftHandPos: {fileID: 1353982053}
   RightHandPos: {fileID: 555485678}
+  DroppedDecalPrefab: {fileID: 7037216008951858591, guid: b64d8746038370049894f7096198bf00,
+    type: 3}
 --- !u!114 &7895809708477422408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,6 +933,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AllowAnimationInjection: 0
   NonAllocInjection: 1
+  IdleSpeedMultiplier: 1
 --- !u!114 &513238533
 MonoBehaviour:
   m_ObjectHideFlags: 0

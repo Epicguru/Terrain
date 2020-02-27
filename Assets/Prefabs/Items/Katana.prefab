@@ -236,10 +236,13 @@ MonoBehaviour:
     SleepPosition: {x: 0, y: 0, z: 0}
     sleepTimer: 0
   Name: Katana
+  Rarity: 3
   DefaultIcon: {fileID: 2800000, guid: e48ec00143c907a448bc15e7e040e623, type: 3}
   EquippedOffset: {x: 0, y: -0.18, z: 0.281}
   LeftHandPos: {fileID: 1372195760391908520}
   RightHandPos: {fileID: 5647073497973113803}
+  DroppedDecalPrefab: {fileID: 7037216008951858591, guid: b64d8746038370049894f7096198bf00,
+    type: 3}
 --- !u!114 &1570122415400891163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AllowAnimationInjection: 0
   NonAllocInjection: 1
+  IdleSpeedMultiplier: 1
 --- !u!114 &8296172667683810636
 MonoBehaviour:
   m_ObjectHideFlags: 0

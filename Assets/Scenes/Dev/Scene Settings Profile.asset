@@ -408,6 +408,9 @@ MonoBehaviour:
   quality:
     m_OverrideState: 1
     m_Value: 1
+  enabled:
+    m_OverrideState: 0
+    m_Value: 1
   rayTracing:
     m_OverrideState: 1
     m_Value: 0
@@ -457,16 +460,13 @@ MonoBehaviour:
     m_Value: 16
     min: 1
     max: 32
+  mode:
+    m_OverrideState: 0
+    m_Value: 2
   upscaleRadius:
     m_OverrideState: 1
     m_Value: 4
   fullResolution:
-    m_OverrideState: 1
-    m_Value: 0
-  deferredMode:
-    m_OverrideState: 1
-    m_Value: 0
-  rayBinning:
     m_OverrideState: 1
     m_Value: 0
   sampleCount:
@@ -752,6 +752,12 @@ MonoBehaviour:
   color:
     m_OverrideState: 1
     m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    hdr: 1
+    showAlpha: 0
+    showEyeDropper: 1
+  tint:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 1
     showAlpha: 0
     showEyeDropper: 1

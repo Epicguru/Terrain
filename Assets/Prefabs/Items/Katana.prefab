@@ -59,7 +59,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -86,7 +85,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!95 &3659130429047041871
 Animator:
   serializedVersion: 3
@@ -241,8 +239,6 @@ MonoBehaviour:
   EquippedOffset: {x: 0, y: -0.18, z: 0.281}
   LeftHandPos: {fileID: 1372195760391908520}
   RightHandPos: {fileID: 5647073497973113803}
-  DroppedDecalPrefab: {fileID: 7037216008951858591, guid: b64d8746038370049894f7096198bf00,
-    type: 3}
 --- !u!114 &1570122415400891163
 MonoBehaviour:
   m_ObjectHideFlags: 0

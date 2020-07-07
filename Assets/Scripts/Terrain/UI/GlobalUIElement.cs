@@ -14,6 +14,7 @@ public abstract class GlobalUIElement : MonoBehaviour
         if (all.ContainsKey(t))
             return all[t] as T;
 
+        Debug.LogWarning($"Failed to find global UI element of type {typeof(T).Name}");
         return default(T);
     }
 

@@ -91,7 +91,6 @@ namespace Terrain.Items
 
                     actions.RemoveAt(i);
                     i--;
-                    continue;
                 }
             }
         }

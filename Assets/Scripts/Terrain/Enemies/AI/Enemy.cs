@@ -4,6 +4,7 @@ namespace Terrain.Enemies.AI
 {
     [RequireComponent(typeof(EnemyNavigation))]
     [RequireComponent(typeof(EnemyAnimator))]
+    [RequireComponent(typeof(Health))]
     public class Enemy : MonoBehaviour
     {
         public EnemyNavigation Navigation
@@ -26,5 +27,15 @@ namespace Terrain.Enemies.AI
             }
         }
         private EnemyAnimator _anim;
+        public Health Health
+        {
+            get
+            {
+                if (_health == null)
+                    _health = GetComponent<Health>();
+                return _health;
+            }
+        }
+        private Health _health;
     }
 }

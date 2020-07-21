@@ -16,6 +16,16 @@ namespace Terrain.Enemies.AI
             }
         }
         private NavMeshAgent _agent;
+        public Health Health
+        {
+            get
+            {
+                if (_health == null)
+                    _health = GetComponent<Health>();
+                return _health;
+            }
+        }
+        private Health _health;
 
         public float Speed
         {
@@ -43,6 +53,13 @@ namespace Terrain.Enemies.AI
 
         private void Update()
         {
+            if (Health.IsDead)
+            {
+                Agent.enabled = false;
+                Agent.destination = transform.position;
+                return;
+            }
+
             if (Target != null)
                 TargetPos = Target.position;
 

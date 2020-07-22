@@ -1,4 +1,5 @@
 ﻿using Terrain.Effects;
+using Terrain.Enemies;
 using Terrain.Utils;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ namespace Terrain.Projectiles
         public float MaxTime = 10f;
         public BulletImpact ImpactPrefab;
         public TempParticleEffect ImpactParticlesPrefab;
+        public int Damage = 10;
 
         private float timer;
 
@@ -53,7 +55,8 @@ namespace Terrain.Projectiles
             if(hit.collider != null)
             {
                 // Hit a wall or something.
-                OnHit(hit);            
+                OnHit(hit);
+                return;
             }
 
             // Add gravity to projectile.
@@ -84,6 +87,13 @@ namespace Terrain.Projectiles
                 var spawned = PoolObject.Spawn(ImpactParticlesPrefab);
                 spawned.transform.position = hit.point + hit.normal * 0.02f;
                 spawned.transform.forward = hit.normal;
+            }
+
+            // Check for health component.
+            var health = hit.collider.transform.GetComponentInParent<Health>();
+            if (health != null)
+            {
+                health.ChangeHealth(-Damage);
             }
         }
 

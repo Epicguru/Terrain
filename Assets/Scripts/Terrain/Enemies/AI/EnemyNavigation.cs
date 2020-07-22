@@ -43,7 +43,17 @@ namespace Terrain.Enemies.AI
         {
             get
             {
-                return Agent.remainingDistance > Agent.stoppingDistance - 0.2f;
+                return Agent.enabled && Agent.remainingDistance > Agent.stoppingDistance - 0.2f;
+            }
+        }
+
+        public Vector3 Velocity
+        {
+            get
+            {
+                if (!Agent.enabled)
+                    return Vector3.zero;
+                return Agent.velocity;
             }
         }
 
@@ -56,14 +66,19 @@ namespace Terrain.Enemies.AI
             if (Health.IsDead)
             {
                 Agent.enabled = false;
-                Agent.destination = transform.position;
                 return;
             }
 
             if (Target != null)
+            {
                 TargetPos = Target.position;
+                Agent.destination = TargetPos;
+            }
+            else
+            {
+                Agent.ResetPath();
+            }
 
-            Agent.destination = TargetPos;
         }
     }
 }

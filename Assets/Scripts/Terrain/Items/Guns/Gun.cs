@@ -44,6 +44,7 @@ namespace Terrain.Items.Guns
         public int BulletsPerShot = 1;
         [PositiveValueOnly]
         public float MaxRPM = 300f;
+        public bool IsOpenBolt = false;
         public bool BulletInChamber = false;
         public int MagazineBullets = 0;
         [PositiveValueOnly]
@@ -52,8 +53,6 @@ namespace Terrain.Items.Guns
         [Foldout("Reloading", true)]
         [Tooltip("Does this gun use a shotgun-like reload? (Loading individual shots)")]
         public bool ShotgunReload = false;
-        [Tooltip("If shotgun-like reload is enabled, the is the user allowed to interrupt the animation before all shells/bullets are loaded? Recommended true for consistency, only disable for a valid gameplay to technical reason.")]
-        public bool CanInterruptShotgunReload = true;
 
         [Foldout("Recoil", true)]
         [MyBox.Separator("Kick (Gun)")]
@@ -163,13 +162,13 @@ namespace Terrain.Items.Guns
             Item.AllowRunning = !IsInADS;
 
             // Update Empty bool flag.
-            Anim.SetBool("Empty", !BulletInChamber);
+            Anim.SetBool("Empty", !BulletInChamber && !IsOpenBolt);
 
             // There is no bullet in chamber, but there are bullets in magazine.
             // This should cause the chamber animation to play.
             // However, the trigger also needs to be reset once chamber is triggered, since the empty reload animation
             // has a delay between reloading and chambering.
-            if(!BulletInChamber && MagazineBullets > 0)
+            if(!BulletInChamber && MagazineBullets > 0 && !IsOpenBolt)
             {
                 Anim.SetTrigger("Chamber");
             }
@@ -179,7 +178,7 @@ namespace Terrain.Items.Guns
             }
 
             var slide = GunSlide;
-            if(slide != null)
+            if(slide != null && !IsOpenBolt)
             {
                 // Override slide behaviour 
                 slide.Override = !BulletInChamber;
@@ -260,7 +259,10 @@ namespace Terrain.Items.Guns
 
         public virtual bool CanShoot()
         {
-            if (!BulletInChamber)
+            if (!BulletInChamber && !IsOpenBolt)
+                return false;
+
+            if (IsOpenBolt && MagazineBullets <= 0)
                 return false;
 
             if (IsReloading)
@@ -285,7 +287,7 @@ namespace Terrain.Items.Guns
             var a = new System.Action(() =>
             {
                 // Make sure that the empty state is updated.
-                Anim.SetBool("Empty", !BulletInChamber);
+                Anim.SetBool("Empty", !BulletInChamber && !IsOpenBolt);
 
                 // Set trigger or bool based on animator type.
                 if (ShotgunReload)
@@ -376,7 +378,7 @@ namespace Terrain.Items.Guns
 
         public bool ShootNow(bool immediate = false)
         {
-            if (!BulletInChamber)
+            if (!BulletInChamber && !IsOpenBolt)
             {
                 Debug.LogWarning($"Gun {Item.Name} has no bullet in the chamber but the shoot animation played...");
                 return false;
@@ -421,13 +423,13 @@ namespace Terrain.Items.Guns
 
         private bool InternalShootRegular()
         {
-            if (!BulletInChamber)
+            if (!BulletInChamber && !IsOpenBolt)
             {
                 Debug.LogWarning($"Gun {Item.Name} has no bullet in the chamber but the shoot animation played...");
                 return false;
             }
 
-            // Remove the bullet from the chamber.
+            // Remove the bullet from the chamber. If it's open bolt, that's also fine.
             BulletInChamber = false;
 
             // Spawn the bullet.
@@ -497,12 +499,17 @@ namespace Terrain.Items.Guns
             return worldSpace.normalized;
         }
 
+        /// <summary>
+        /// Takes a bullet of out of the magazine pool and puts it into the chamber.
+        /// If this is an open bolt weapon, it just removes one from the magazine.
+        /// </summary>
         private void Rechamber()
         {
             if (MagazineBullets > 0)
             {
                 MagazineBullets--;
-                BulletInChamber = true;
+                if(!IsOpenBolt)
+                    BulletInChamber = true;
             }
         }
 
@@ -543,6 +550,12 @@ namespace Terrain.Items.Guns
 
         private void OnChamber()
         {
+            if (IsOpenBolt)
+            {
+                Debug.LogWarning($"This gun {Item.Name} is open bolt, but OnChamber() was called (presumably from animation)");
+                return;
+            }
+
             if (MagazineBullets > 0 && !BulletInChamber)
                 Rechamber();
             else

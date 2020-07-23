@@ -45,7 +45,7 @@ namespace Terrain.Enemies.AI
             if(Anim != null)
                 Anim.enabled = false;
 
-            
+            SetState(true);
         }
 
         private void SetState(bool ragdoll)

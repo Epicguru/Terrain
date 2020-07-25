@@ -6,7 +6,7 @@ namespace Terrain.Enemies.AI
     [RequireComponent(typeof(NavMeshAgent))]
     public class EnemyNavigation : MonoBehaviour
     {
-        public NavMeshAgent Agent
+        private NavMeshAgent Agent
         {
             get
             {
@@ -44,6 +44,14 @@ namespace Terrain.Enemies.AI
             get
             {
                 return Agent.enabled && Agent.remainingDistance > Agent.stoppingDistance - 0.2f;
+            }
+        }
+
+        public float DistanceToTarget
+        {
+            get
+            {
+                return Agent.enabled ? Mathf.Max(0f, Agent.remainingDistance - Agent.stoppingDistance) : float.PositiveInfinity;
             }
         }
 

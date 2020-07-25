@@ -1,4 +1,5 @@
 ﻿using Terrain.Camera;
+using Terrain.Enemies;
 using UnityEngine;
 
 namespace Terrain.Items.Melee
@@ -18,10 +19,12 @@ namespace Terrain.Items.Melee
         private Item _item;
         public Animator Anim => Item.Animation.Animator;
 
+        [Header("Attack")]
+        public Transform[] SweepPoints;
+        public float SweepPointLength = 0.3f;
+
         [Header("Defence")]
         public bool Block;
-        [Range(0, 2)]
-        public int BlockDirection;
 
         [Header("Custom Animation")]
         public bool CustomAnimationAutoExit = true;
@@ -67,12 +70,8 @@ namespace Terrain.Items.Melee
             if (Item.State != ItemState.Active)
                 return;
 
-            UpdateBlocking();
-
             // Update item run flag: melee weapons don't allow running while blocking.
             Item.AllowRunning = !Block;
-
-            Anim.SetInteger("BlockDirection", BlockDirection);
 
             Anim.SetBool("Block", Block);
             Anim.SetBool("CustomAutoExit", CustomAnimationAutoExit);
@@ -81,6 +80,32 @@ namespace Terrain.Items.Melee
 
             // Update UI elements (such as block indicator
             UpdateUI();
+
+            UpdateHitting();
+        }
+
+        private void UpdateHitting()
+        {
+            if (!IsInAttack)
+                return;
+
+            foreach(var sweep in SweepPoints)
+            {
+                Vector3 start = sweep.position;
+                Vector3 end = sweep.position + sweep.forward * SweepPointLength * sweep.localScale.z;
+
+                bool didHit = Physics.Linecast(start, end, out var hitInfo);
+                Debug.DrawLine(start, end, didHit ? Color.red : Color.yellow, 10f);
+
+                if (didHit)
+                {
+                    var health = hitInfo.collider.GetComponentInParent<Health>();
+                    if(health != null)
+                    {
+                        health.ChangeHealth(-10);
+                    }
+                }
+            }
         }
 
         public void TriggerCustom()
@@ -111,7 +136,6 @@ namespace Terrain.Items.Melee
 
         public void TriggerBlockHit(int direction)
         {
-            Anim.SetInteger("BlockHitDirection", direction);
             Anim.SetTrigger("BlockHit");
         }
 
@@ -125,36 +149,6 @@ namespace Terrain.Items.Melee
             Anim.SetTrigger("Inspect");
         }
 
-        private void UpdateBlocking()
-        {
-            if (Block)
-            {
-                // Determine direction.
-                Vector2 up = new Vector2(0f, 1f);
-                Vector2 down = new Vector2(0f, -1f);
-                Vector2 right = new Vector2(1f, 0f);
-                Vector2 left = new Vector2(-1f, 0f);
-
-                var look = CameraLook.Instance;
-                Vector2 movement = new Vector2(look.HorizontalTurnDelta, -look.VerticalTurnDelta);
-                Vector2 moveNormal = movement.normalized;
-
-                if (movement.magnitude >= 1f)
-                {
-                    float upAmount = Vector2.Dot(up, moveNormal);
-                    float downAmount = Vector2.Dot(down, moveNormal); // Not a valid block direction, but used to prevent weird blocking when aiming down.
-                    float rightAmount = Vector2.Dot(right, moveNormal);
-                    float leftAmount = Vector2.Dot(left, moveNormal);
-
-                    int dir = GetLargest(upAmount, rightAmount, leftAmount, downAmount);
-                    if (dir != 3)
-                    {
-                        BlockDirection = dir;
-                    }
-                }
-            }
-        }
-
         private void UpdateUI()
         {
             var block = GlobalUIElement.Get<UI_BlockIndicator>();
@@ -162,7 +156,7 @@ namespace Terrain.Items.Melee
                 return;
 
             block.Active = Block;
-            block.BlockDirection = BlockDirection;
+            block.BlockDirection = 1;
         }
 
         private void UIBlockHit()
@@ -196,19 +190,6 @@ namespace Terrain.Items.Melee
         private void OnAttackEnd()
         {
             IsInAttack = false;
-        }
-
-        private int NewRandom(int min, int max, int not)
-        {
-            if (Mathf.Abs(max - min) < 1)
-                return min;
-
-            int r = Random.Range(min, max);
-            while (r == not)
-            {
-                r = Random.Range(min, max);
-            }
-            return r;
         }
 
         private void UponAnimationEvent(AnimationEvent e)
@@ -248,6 +229,15 @@ namespace Terrain.Items.Melee
             Block = false;
             IsInAttack = false;
             UpdateUI();
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+            foreach(var point in SweepPoints)
+            {
+                Gizmos.DrawLine(point.position, point.position + point.forward * SweepPointLength * point.localScale.z);
+            }
         }
     }
 }

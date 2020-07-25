@@ -161,7 +161,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Top Slash
-  m_Speed: 2.4
+  m_Speed: 1.9
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 3019602006736274771}
@@ -540,7 +540,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Left Slash
-  m_Speed: 1.6
+  m_Speed: 1.4
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6760157609756879669}
@@ -1089,7 +1089,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Right Slash
-  m_Speed: 1.4
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 3444941187906603478}

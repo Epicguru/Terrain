@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1374224227702781497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1345056210098428330}
+  m_Layer: 0
+  m_Name: Point 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1345056210098428330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374224227702781497}
+  m_LocalRotation: {x: -0.06836556, y: -3.7401796e-10, z: 0.0000000037319547, w: 0.99766034}
+  m_LocalPosition: {x: -0, y: 0.0041, z: 0.5687}
+  m_LocalScale: {x: 1, y: 1, z: 1.1}
+  m_Children: []
+  m_Father: {fileID: 6992795078913687931}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: -7.84, y: 0, z: 0}
 --- !u!1 &2238836894028082533
 GameObject:
   m_ObjectHideFlags: 0
@@ -27,15 +57,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2238836894028082533}
-  m_LocalRotation: {x: -0.63084155, y: 0.033108983, z: -0.042353246, w: 0.77404714}
-  m_LocalPosition: {x: 0.179, y: -0.005, z: 0.038}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1372195760391908520}
   - {fileID: 5647073497973113803}
+  - {fileID: 6992795078913687931}
   m_Father: {fileID: 7542563149597187443}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -76.855, y: 27.410002, z: -28.164001}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4147439416650705229
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -116,6 +147,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff4bdcc35ba43e3419ae56ffa1eeb911, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2321031209370392089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7243858007252830434}
+  m_Layer: 0
+  m_Name: Point 0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7243858007252830434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2321031209370392089}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.0033, z: 0.1027}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6992795078913687931}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2564670918459259200
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +206,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8434931656268529349}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6361187725080515704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6992795078913687931}
+  m_Layer: 0
+  m_Name: SweepPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6992795078913687931
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361187725080515704}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 7243858007252830434}
+  - {fileID: 1345056210098428330}
+  m_Father: {fileID: 8434931656268529349}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6507915534525941084
 GameObject:
@@ -266,8 +359,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf9d9f97dd7d7d6498d5f7ba50c8861c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SweepPoints:
+  - {fileID: 7243858007252830434}
+  - {fileID: 1345056210098428330}
+  SweepPointLength: 0.3
   Block: 0
-  BlockDirection: 0
   CustomAnimationAutoExit: 1
   CustomAnimationSpeed: 1
   Clip: {fileID: 7400000, guid: a4ce85a9203d421488b663db9056306d, type: 2}
